@@ -29,7 +29,7 @@ const VideoForm: React.FC<VideoFormProps> = ({ uid, onUpload }) => {
     const filePath = `${uid}-${Math.random()}.${fileExt}`;
 
     const { data, error } = await supabase.storage
-      .from("movies")
+      .from("videos")
       .upload(filePath, file);
 
     setUploading(false);

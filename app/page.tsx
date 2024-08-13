@@ -1,10 +1,9 @@
-import Header from "@/components/Header";
-import VideoForm from "@/components/form/VideoForm";
+import Sidebar from "@/components/Sidebar";
 
 export default function Home() {
   return (
     <>
-      <Header />
+      <Sidebar />
       <div>Home</div>
     </>
   );
