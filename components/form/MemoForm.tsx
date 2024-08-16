@@ -8,15 +8,27 @@ interface MemoFormProps {
 const MemoForm: React.FC<MemoFormProps> = ({ onMemoChange }) => {
   const [memo, setMemo] = useState("");
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMemo(event.target.value);
     onMemoChange(event.target.value);
   };
 
   return (
-    <div>
-      <label>メモ:</label>
-      <input type="text" value={memo} onChange={handleChange} />
+    <div className="mb-4">
+      <label
+        htmlFor="memo"
+        className="block text-sm font-medium text-gray-700 mb-1"
+      >
+        メモ
+      </label>
+      <textarea
+        id="memo"
+        value={memo}
+        onChange={handleChange}
+        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition duration-150 ease-in-out"
+        rows={4}
+        placeholder="メモを入力してください"
+      />
     </div>
   );
 };

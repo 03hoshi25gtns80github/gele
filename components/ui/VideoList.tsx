@@ -46,7 +46,7 @@ const VideoList = ({ videos }: { videos: Videos[] }) => {
             <h2 className="text-2xl font-bold mb-2 ml-4">{video.title}</h2>
             <video src={videoUrls[index]} controls className="w-full mb-2" />
           </div>
-          <div className="mt-16 ml-4 w-1/3">
+          <div className="mt-10 ml-4 w-1/3">
             <div className="mb-4 bg-white p-2 rounded">
               <div className="flex items-center border-b-2 border-gray-400">
                 <FaStickyNote className="ml-2 mb-2 text-gray-400 text-3xl" />
