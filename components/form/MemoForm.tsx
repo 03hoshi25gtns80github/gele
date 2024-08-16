@@ -10,7 +10,7 @@ const MemoForm: React.FC<MemoFormProps> = ({ onMemoChange }) => {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMemo(event.target.value);
-    onMemoChange(event.target.value); // 親コンポーネントに新しいメモの内容を通知
+    onMemoChange(event.target.value);
   };
 
   return (

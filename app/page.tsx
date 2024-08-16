@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <>
       <Sidebar />
-      <div>Home</div>
+      <div className="flex-grow bg-red-600">Home</div>
     </>
   );
 }

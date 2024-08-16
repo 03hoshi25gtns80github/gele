@@ -18,7 +18,7 @@ const VideoForm: React.FC<VideoFormProps> = ({ uid, onUpload }) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
       setVideoURL(URL.createObjectURL(file));
-      await handleUpload(file); // ファイル選択時にアップロードを実行
+      await handleUpload(file);
     }
   };
 

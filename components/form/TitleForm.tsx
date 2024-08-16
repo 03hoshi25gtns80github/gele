@@ -10,7 +10,7 @@ const TitleForm: React.FC<TitleFormProps> = ({ onTitleChange }) => {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
-    onTitleChange(event.target.value); // 親コンポーネントに新しいタイトルの内容を通知
+    onTitleChange(event.target.value);
   };
 
   return (

@@ -1,60 +1,86 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 const Sidebar = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true); // 最初はたたんだ状態
+
+  const handleMouseEnter = () => {
+    setIsCollapsed(false);
+  };
+
+  const handleMouseLeave = () => {
+    setIsCollapsed(true);
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (event: MouseEvent) => {
+      if (event.clientX > 256) {
+        setIsCollapsed(true);
+      }
+    };
+
+    if (!isCollapsed) {
+      document.addEventListener("mousemove", handleMouseMove);
+    } else {
+      document.removeEventListener("mousemove", handleMouseMove);
+    }
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, [isCollapsed]);
 
   return (
-    <aside
-      className={`bg-gray-100 fixed left-0 top-0 h-screen transition-all duration-300 ${
-        isCollapsed ? "w-16" : "w-64"
-      }`}
-    >
-      <div className="p-4">
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="absolute top-4 right-4 bg-gray-200 p-2 rounded hover:bg-gray-300"
-        >
-          {isCollapsed ? ">" : "<"}
-        </button>
-        {!isCollapsed && <h1 className="text-2xl font-bold mb-6">gele-ch</h1>}
-        <nav>
-          <ul className="space-y-4">
-            <li>
-              <Link
-                href="/profile"
-                className={`block hover:bg-gray-200 p-2 rounded ${
-                  isCollapsed ? "text-center" : ""
-                }`}
-              >
-                {isCollapsed ? "👤" : "プロフィール更新"}
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/settings"
-                className={`block hover:bg-gray-200 p-2 rounded ${
-                  isCollapsed ? "text-center" : ""
-                }`}
-              >
-                {isCollapsed ? "⚙️" : "設定"}
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/logout"
-                className={`block hover:bg-gray-200 p-2 rounded ${
-                  isCollapsed ? "text-center" : ""
-                }`}
-              >
-                {isCollapsed ? "🚪" : "ログアウト"}
-              </Link>
-            </li>
-          </ul>
-        </nav>
+    <>
+      <div
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        className="fixed top-6 left-6 bg-blue-500 text-white p-3 rounded-full cursor-pointer z-50 text-2xl"
+      >
+        gele-ch
       </div>
-    </aside>
+      <aside
+        className={`bg-blue-400 fixed top-0 transition-all duration-300 ${
+          isCollapsed ? "-left-64" : "left-0"
+        } w-55 h-screen`}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <div className="p-4 relative mt-20">
+          {" "}
+          {/* mt-16でgele-chのボックスの下に配置 */}
+          <nav>
+            <ul className="space-y-4">
+              <li>
+                <Link
+                  href="/profile"
+                  className="block hover:bg-blue-700 text-white p-2 rounded"
+                >
+                  プロフィール更新
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/settings"
+                  className="block hover:bg-blue-700 text-white p-2 rounded"
+                >
+                  設定
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/logout"
+                  className="block hover:bg-blue-700 text-white p-2 rounded"
+                >
+                  ログアウト
+                </Link>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </aside>
+    </>
   );
 };
 

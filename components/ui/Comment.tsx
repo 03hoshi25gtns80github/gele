@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { FaPaperPlane } from "react-icons/fa"; // アイコンをインポート
 
 interface CommentProps {
   videoId: string;
@@ -18,6 +19,7 @@ const Comment = ({ videoId }: CommentProps) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
 
   const formatTimeAgo = (dateString: string) => {
     const date = new Date(dateString);
@@ -69,29 +71,50 @@ const Comment = ({ videoId }: CommentProps) => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleCommentSubmit}>
+    <div className="bg-white p-4 rounded">
+      <form onSubmit={handleCommentSubmit} className="mb-2 flex">
         <input
           type="text"
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
           placeholder="コメントを入力"
           disabled={isSubmitting}
+          className="border p-2 rounded w-full"
         />
-        <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "送信中..." : "送信"}
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className={`m-2 p-2 rounded w-11 ${isSubmitting ? "bg-gray-300" : "bg-blue-500"} text-white flex justify-center items-center`}
+        >
+          <FaPaperPlane />
         </button>
       </form>
-      <div>
+      <div className="bg-gray-100 p-2 rounded shadow-md">
         {comments.length === 0 ? (
           <p>まだコメントがありません</p>
         ) : (
-          comments.map((comment) => (
-            <div key={comment.id}>
-              <p>{comment.comment}</p>
-              <small>{formatTimeAgo(comment.created_at)}</small>
+          <>
+            <div
+              key={comments[0].id}
+              className="mb-2 cursor-pointer"
+              onClick={() => setIsCollapsed(!isCollapsed)}
+            >
+              <p>{comments[0].comment}</p>
+              <small>{formatTimeAgo(comments[0].created_at)}</small>
+              {comments.length > 1 && (
+                <p className="text-gray-600 ">
+                  {isCollapsed ? "コメントを表示" : "コメントを隠す"}
+                </p>
+              )}
             </div>
-          ))
+            {!isCollapsed &&
+              comments.slice(1).map((comment) => (
+                <div key={comment.id} className="mb-2">
+                  <p>{comment.comment}</p>
+                  <small>{formatTimeAgo(comment.created_at)}</small>
+                </div>
+              ))}
+          </>
         )}
       </div>
     </div>

@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import ReactCalendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
@@ -17,6 +18,7 @@ const Calendar: React.FC<CalendarProps> = ({ dates, onDateSelect }) => {
 
   return (
     <ReactCalendar
+      locale="en"
       tileContent={tileContent}
       onClickDay={(value) => onDateSelect(value.toISOString().split("T")[0])}
     />

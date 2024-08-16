@@ -2,6 +2,7 @@
 import React, { useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import Comment from "@/components/ui/Comment";
+import { FaStickyNote } from "react-icons/fa";
 
 interface Videos {
   id: string;
@@ -38,13 +39,23 @@ const VideoList = ({ videos }: { videos: Videos[] }) => {
   }, [videos, supabase]);
 
   return (
-    <div>
+    <div className="w-4/5">
       {videos.map((video, index) => (
-        <div key={index}>
-          <h2>{video.title}</h2>
-          <p>{video.memo}</p>
-          <video src={videoUrls[index]} controls />
-          <Comment videoId={video.id} />
+        <div key={index} className="bg-blue-50 p-4 mb-4 rounded flex">
+          <div className="flex-1 w-2/3">
+            <h2 className="text-2xl font-bold mb-2 ml-4">{video.title}</h2>
+            <video src={videoUrls[index]} controls className="w-full mb-2" />
+          </div>
+          <div className="mt-16 ml-4 w-1/3">
+            <div className="mb-4 bg-white p-2 rounded">
+              <div className="flex items-center border-b-2 border-gray-400">
+                <FaStickyNote className="ml-2 mb-2 text-gray-400 text-3xl" />
+                <div className="text-xl font-bold ml-2">メモ</div>
+              </div>
+              <p className="mt-2">{video.memo}</p>
+            </div>
+            <Comment videoId={video.id} />
+          </div>
         </div>
       ))}
     </div>
