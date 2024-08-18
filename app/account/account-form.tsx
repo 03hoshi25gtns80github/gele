@@ -81,15 +81,6 @@ export default function AccountForm({ user }: { user: User | null }) {
         <input id="email" type="text" value={user?.email} disabled />
       </div>
       <div>
-        <label htmlFor="fullName">Full Name</label>
-        <input
-          id="fullName"
-          type="text"
-          value={fullname || ""}
-          onChange={(e) => setFullname(e.target.value)}
-        />
-      </div>
-      <div>
         <label htmlFor="username">Username</label>
         <input
           id="username"
@@ -98,16 +89,6 @@ export default function AccountForm({ user }: { user: User | null }) {
           onChange={(e) => setUsername(e.target.value)}
         />
       </div>
-      <div>
-        <label htmlFor="website">Website</label>
-        <input
-          id="website"
-          type="url"
-          value={website || ""}
-          onChange={(e) => setWebsite(e.target.value)}
-        />
-      </div>
-
       <Avatar
         uid={user?.id ?? null}
         url={avatar_url}
@@ -128,14 +109,6 @@ export default function AccountForm({ user }: { user: User | null }) {
         >
           {loading ? "Loading ..." : "Update"}
         </button>
-      </div>
-
-      <div>
-        <form action="/auth/signout" method="post">
-          <button className="button block" type="submit">
-            Sign out
-          </button>
-        </form>
       </div>
     </div>
   );

@@ -39,7 +39,7 @@ const VideoList = ({ videos }: { videos: Videos[] }) => {
   }, [videos, supabase]);
 
   return (
-    <div className="w-4/5">
+    <div className="w-2/3">
       {videos.map((video, index) => (
         <div key={index} className="bg-blue-50 p-4 mb-4 rounded flex">
           <div className="flex-1 w-2/3">

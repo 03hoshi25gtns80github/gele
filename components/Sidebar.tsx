@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 const Sidebar = () => {
-  const [isCollapsed, setIsCollapsed] = useState(true); // 最初はたたんだ状態
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const handleMouseEnter = () => {
     setIsCollapsed(false);
@@ -54,7 +54,7 @@ const Sidebar = () => {
             <ul className="space-y-4">
               <li>
                 <Link
-                  href="/profile"
+                  href="/account"
                   className="block hover:bg-blue-700 text-white p-2 rounded"
                 >
                   プロフィール更新
@@ -69,12 +69,13 @@ const Sidebar = () => {
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/logout"
-                  className="block hover:bg-blue-700 text-white p-2 rounded"
-                >
-                  ログアウト
-                </Link>
+                <div className="block hover:bg-blue-700 text-white p-2 rounded">
+                  <form action="/auth/signout" method="post">
+                    <button className="button block" type="submit">
+                      ログアウト
+                    </button>
+                  </form>
+                </div>
               </li>
             </ul>
           </nav>

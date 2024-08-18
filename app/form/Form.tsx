@@ -40,6 +40,7 @@ const Form = ({ user }: { user: User | null }) => {
       console.log("Data inserted successfully:", data);
     }
     setIsSubmitting(false);
+    alert("送信しました");
   };
 
   return (

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
+import FriendListSection from "./FriendListSection";
 
 interface FriendData {
   id: string;
@@ -12,6 +13,7 @@ interface FriendData {
 
 const FriendsList = ({ user }: { user: User | null }) => {
   const [friendsList, setFriendsList] = useState<FriendData[]>([]);
+  const [activeTab, setActiveTab] = useState<"friends" | "requests">("friends");
   const supabase = createClient();
 
   useEffect(() => {
@@ -73,23 +75,13 @@ const FriendsList = ({ user }: { user: User | null }) => {
     );
   };
 
-  const renderFriendList = (
-    title: string,
-    friends: FriendData[],
-    showType: boolean = false
-  ) => (
-    <>
-      <h3 className="font-semibold mt-4">{title}</h3>
-      <ul>
-        {friends.map((friend) => (
-          <li key={friend.id} className="mb-2">
-            {friend.username}
-            {showType && ` (${friend.type === "sent" ? "送信済み" : "受信中"})`}
-          </li>
-        ))}
-      </ul>
-    </>
-  );
+  const handleFriendAccepted = (friendId: string) => {
+    setFriendsList((prevFriends) =>
+      prevFriends.map((friend) =>
+        friend.id === friendId ? { ...friend, status: "accepted" } : friend
+      )
+    );
+  };
 
   if (!user) {
     return <div>ユーザーがログインしていません。</div>;
@@ -97,20 +89,51 @@ const FriendsList = ({ user }: { user: User | null }) => {
 
   return (
     <div className="bg-white p-4 rounded shadow-lg">
-      <h2 className="text-lg font-bold mb-4">フレンドリスト</h2>
-      {renderFriendList(
-        "承認済みフレンド",
-        filterFriendsByCategory("accepted")
+      <nav className="mb-4">
+        <button
+          className={`mr-4 pb-2 ${
+            activeTab === "friends"
+              ? "font-bold border-b-2 border-green-500"
+              : ""
+          }`}
+          onClick={() => setActiveTab("friends")}
+        >
+          フレンド
+        </button>
+        <button
+          className={`pb-2 ${
+            activeTab === "requests"
+              ? "font-bold border-b-2 border-green-500"
+              : ""
+          }`}
+          onClick={() => setActiveTab("requests")}
+        >
+          リクエスト
+        </button>
+      </nav>
+      {activeTab === "friends" && (
+        <FriendListSection
+          title=""
+          friends={filterFriendsByCategory("accepted")}
+          user_id={user.id}
+        />
       )}
-      {renderFriendList(
-        "承認待ち",
-        filterFriendsByCategory("pending", "sent"),
-        true
-      )}
-      {renderFriendList(
-        "フレンドリクエスト",
-        filterFriendsByCategory("pending", "received"),
-        true
+      {activeTab === "requests" && (
+        <>
+          <FriendListSection
+            title="届いたリクエスト"
+            friends={filterFriendsByCategory("pending", "received")}
+            showType={true}
+            onFriendAccepted={handleFriendAccepted}
+            user_id={user.id}
+          />
+          <FriendListSection
+            title="承認待ち"
+            friends={filterFriendsByCategory("pending", "sent")}
+            showType={true}
+            user_id={user.id}
+          />
+        </>
       )}
     </div>
   );

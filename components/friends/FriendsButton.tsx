@@ -1,56 +1,69 @@
 "use client";
-
 import React, { useEffect, useRef, useState } from "react";
 import { User } from "@supabase/supabase-js";
 import FriendsList from "./FriendsList";
-import { FaUserFriends } from "react-icons/fa"; // アイコンをインポート
+import FriendSearch from "./FriendSearch";
+import { FaUserFriends } from "react-icons/fa";
 
 interface FriendsButtonProps {
   user: User | null;
 }
 
 const FriendsButton: React.FC<FriendsButtonProps> = ({ user }) => {
-  const [showFriendsList, setShowFriendsList] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const buttonRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
-  const toggleFriendsList = () => {
-    setShowFriendsList(!showFriendsList);
+  const handleMouseEnter = () => {
+    setIsExpanded(true);
   };
 
-  const handleClickOutside = (event: MouseEvent) => {
-    if (listRef.current && !listRef.current.contains(event.target as Node)) {
-      setShowFriendsList(false);
-    }
+  const handleMouseLeave = () => {
+    setIsExpanded(false);
   };
 
   useEffect(() => {
-    if (showFriendsList) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+    const handleMouseMove = (event: MouseEvent) => {
+      if (
+        !buttonRef.current?.contains(event.target as Node) &&
+        !listRef.current?.contains(event.target as Node)
+      ) {
+        setIsExpanded(false);
+      }
     };
-  }, [showFriendsList]);
+
+    document.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, []);
 
   return (
-    <div className="fixed bottom-12 right-12">
-      <button
-        onClick={toggleFriendsList}
-        className="bg-green-500 hover:bg-green-700 text-white font-bold p-6 rounded-full shadow-lg"
+    <>
+      <div
+        ref={buttonRef}
+        onMouseEnter={handleMouseEnter}
+        className={`fixed bottom-12 right-12 text-white p-6 rounded-full cursor-pointer z-50 text-2xl ${
+          isExpanded ? 'bg-green-400' : 'bg-green-500'
+        }`}
       >
         <FaUserFriends size={32} />
-      </button>
-      {showFriendsList && (
-        <div
+      </div>
+      {isExpanded && (
+        <aside
           ref={listRef}
-          className="absolute bottom-12 right-0 w-64 bg-white p-4 rounded shadow-lg"
+          className="fixed top-24 bottom-0 right-0 bg-green-50 transition-all duration-300 w-1/3 h-screen"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
-          <FriendsList user={user} />
-        </div>
+          <div className="p-6 relative">
+            <FriendSearch user={user} />
+            <FriendsList user={user} />
+          </div>
+        </aside>
       )}
-    </div>
+    </>
   );
 };
 
