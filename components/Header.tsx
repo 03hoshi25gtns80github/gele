@@ -38,7 +38,7 @@ const Header: React.FC<HeaderProps> = ({ id }) => {
     <header className="bg-gradient-to-r from-blue-300 via-indigo-400 to-purple-400 p-7 shadow-lg w-full z-30">
       <div className="flex justify-center">
         <h1 className="text-white text-3xl font-bold">
-          {username ? `${username} のカレンダー` : WELCOME_MESSAGE}
+          {username ? `${username}'s カレンダー` : WELCOME_MESSAGE}
         </h1>
       </div>
     </header>
