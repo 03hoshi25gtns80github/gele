@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
+import { FiCamera } from "react-icons/fi";
+import Spinner from "@/components/form/Spinner";
 
 export default function Avatar({
   uid,
@@ -69,38 +71,36 @@ export default function Avatar({
   };
 
   return (
-    <div>
-      {avatarUrl ? (
-        <Image
-          width={size}
-          height={size}
-          src={avatarUrl}
-          alt="Avatar"
-          className="avatar image"
-          style={{ height: size, width: size }}
-        />
-      ) : (
-        <div
-          className="avatar no-image"
-          style={{ height: size, width: size }}
-        />
-      )}
-      <div style={{ width: size }}>
-        <label className="button primary block" htmlFor="single">
-          {uploading ? "Uploading ..." : "Upload"}
-        </label>
-        <input
-          style={{
-            visibility: "hidden",
-            position: "absolute",
-          }}
-          type="file"
-          id="single"
-          accept="image/*"
-          onChange={uploadAvatar}
-          disabled={uploading}
-        />
+    <div className="relative" style={{ width: size, height: size }}>
+      <div className="w-full h-full overflow-hidden">
+        {avatarUrl ? (
+          <Image
+            src={avatarUrl}
+            alt="Avatar"
+            layout="fill"
+            objectFit="cover"
+          />
+        ) : (
+          <div className="w-full h-full bg-gray-200" />
+        )}
       </div>
+      <label
+        htmlFor="single"
+        className="absolute bottom-0 right-0 bg-blue-400 text-white p-2 rounded-full hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer"
+      >
+        {uploading ? <Spinner className="h-5 w-5" /> : <FiCamera className="h-5 w-5" />}
+      </label>
+      <input
+        style={{
+          visibility: "hidden",
+          position: "absolute",
+        }}
+        type="file"
+        id="single"
+        accept="image/*"
+        onChange={uploadAvatar}
+        disabled={uploading}
+      />
     </div>
   );
 }

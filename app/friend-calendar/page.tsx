@@ -12,14 +12,9 @@ export default async function Page() {
 
   return (
     <>
-      <Sidebar />
+      <FriendCalendar />
       <div className="justify-center">
-        <div className="w-full max-w-screen-lg mx-auto justify-center">
-          <FriendCalendar />
-        </div>
-        <div>
-          <FriendsButton user={user as User} />
-        </div>
+        <FriendsButton user={user as User} />
       </div>
     </>
   );

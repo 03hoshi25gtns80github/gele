@@ -40,7 +40,7 @@ const Form = ({ user }: { user: User | null }) => {
       console.log("Data inserted successfully:", data);
     }
     setIsSubmitting(false);
-    alert("送信しました");
+    alert("登録完了！");
   };
 
   return (
@@ -66,7 +66,7 @@ const Form = ({ user }: { user: User | null }) => {
           {isSubmitting ? (
             <Spinner className="mx-auto" />
           ) : (
-            "送信"
+            "登録"
           )}
         </button>
       </div>

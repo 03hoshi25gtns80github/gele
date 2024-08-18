@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Header from "@/components/Header";
+import Sidebar from "@/components/Sidebar";
 import Calendar from "@/components/ui/Calendar";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
@@ -39,7 +41,15 @@ const FriendCalendar: React.FC = () => {
     }
   };
 
-  return <Calendar dates={dates} onDateSelect={handleDateSelect} />;
+  return (
+    <>
+      <Header id={friendId} />
+      <Sidebar />
+      <div className="mt-6 flex flex-col items-center">
+        <Calendar dates={dates} onDateSelect={handleDateSelect} />
+      </div>
+    </>
+  );
 };
 
 export default FriendCalendar;
