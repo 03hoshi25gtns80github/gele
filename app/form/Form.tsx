@@ -7,10 +7,12 @@ import VideoForm from "@/components/form/VideoForm";
 import { createClient } from "@/utils/supabase/client";
 import { type User } from "@supabase/supabase-js";
 import Spinner from "@/components/form/Spinner";
+import { useRouter } from "next/navigation";
 
 const Form = ({ user }: { user: User | null }) => {
   const supabase = createClient();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const date = searchParams.get("date");
 
   const [memo, setMemo] = useState("");
@@ -36,15 +38,16 @@ const Form = ({ user }: { user: User | null }) => {
 
     if (error) {
       console.error("Error inserting data:", error.message);
+      alert("登録に失敗しました");
     } else {
       console.log("Data inserted successfully:", data);
+      router.push("/my-calendar");
     }
     setIsSubmitting(false);
-    alert("登録完了！");
   };
 
   return (
-    <div className="w-2/3 mx-auto bg-white shadow-md rounded-lg overflow-hidden">
+    <div className="w-3/5 mx-auto bg-white shadow-md rounded-lg overflow-hidden">
       <div className="px-6 py-4">
         <h2 className="text-2xl font-bold text-center mb-6">
           コンテンツアップロード

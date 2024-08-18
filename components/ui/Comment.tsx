@@ -36,6 +36,18 @@ const Comment = ({ videoId }: CommentProps) => {
     }
   };
 
+  const truncateComment = (comment: string, maxLength: number) => {
+    if (comment.length <= maxLength) return comment;
+    return comment.slice(0, maxLength) + "...";
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleCommentSubmit(e as unknown as React.FormEvent);
+    }
+  };
+
   useEffect(() => {
     async function fetchComments() {
       const { data, error } = await supabase
@@ -73,18 +85,20 @@ const Comment = ({ videoId }: CommentProps) => {
   return (
     <div className="bg-white p-4 rounded">
       <form onSubmit={handleCommentSubmit} className="mb-2 flex">
-        <input
-          type="text"
+        <textarea
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
+          onKeyDown={handleKeyDown} // Enterキーで送信しないようにする
           placeholder="コメントを入力"
           disabled={isSubmitting}
-          className="border p-2 rounded w-full"
+          className="border p-2 rounded w-full resize-none"
+          rows={1} // デフォルトのサイズを1行に設定
+          style={{ height: `${Math.min(newComment.split('\n').length + 1, 4) * 1.3}em` }} // 最大4行まで拡大
         />
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`m-2 p-2 rounded w-11 ${isSubmitting ? "bg-gray-300" : "bg-blue-500"} text-white flex justify-center items-center`}
+          className={`m-2 p-2 rounded w-11 h-8 ${isSubmitting ? "bg-gray-300" : "bg-blue-500"} text-white flex justify-center items-center`} // 高さを固定
         >
           <FaPaperPlane />
         </button>
@@ -99,7 +113,7 @@ const Comment = ({ videoId }: CommentProps) => {
               className="mb-2 cursor-pointer"
               onClick={() => setIsCollapsed(!isCollapsed)}
             >
-              <p>{comments[0].comment}</p>
+              <p>{isCollapsed ? truncateComment(comments[0].comment, 10) : comments[0].comment}</p>
               <small>{formatTimeAgo(comments[0].created_at)}</small>
               {comments.length > 1 && (
                 <p className="text-gray-600 ">

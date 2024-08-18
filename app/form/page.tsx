@@ -1,5 +1,6 @@
 import Form from "@/app/form/Form";
 import { createClient } from "@/utils/supabase/server";
+import Sidebar from "@/components/Sidebar";
 
 export default async function Account() {
   const supabase = createClient();
@@ -8,5 +9,10 @@ export default async function Account() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  return <Form user={user} />;
+  return (
+    <>
+      <Sidebar />
+      <Form user={user} />
+    </>
+  );
 }
