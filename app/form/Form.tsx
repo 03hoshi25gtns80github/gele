@@ -41,7 +41,7 @@ const Form = ({ user }: { user: User | null }) => {
       alert("登録に失敗しました");
     } else {
       console.log("Data inserted successfully:", data);
-      router.push("/my-calendar");
+      router.push(`/my-video?date=${date}`);
     }
     setIsSubmitting(false);
   };
