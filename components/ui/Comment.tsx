@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { FaPaperPlane } from "react-icons/fa"; // アイコンをインポート
+import { FaPaperPlane } from "react-icons/fa";
 
 interface CommentProps {
   videoId: string;
@@ -10,6 +10,7 @@ interface CommentProps {
 interface Comment {
   id: string;
   video_id: string;
+  user_id: string;
   comment: string;
   created_at: string;
 }
@@ -69,9 +70,25 @@ const Comment = ({ videoId }: CommentProps) => {
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    const { data, error } = await supabase
-      .from("comments")
-      .insert([{ video_id: videoId, comment: newComment }]);
+
+    // Get the current user
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      console.error("User not authenticated");
+      setIsSubmitting(false);
+      return;
+    }
+
+    const { data, error } = await supabase.from("comments").insert([
+      {
+        video_id: videoId,
+        comment: newComment,
+        user_id: user.id, // Insert the user ID
+      },
+    ]);
 
     if (error) {
       console.error("Error adding comment: ", error);
@@ -79,7 +96,7 @@ const Comment = ({ videoId }: CommentProps) => {
       setComments([data[0], ...comments]);
     }
     setIsSubmitting(false);
-    setNewComment(""); // 送信完了後にリセットしないとうまくいかない
+    setNewComment(""); // Reset after submission
   };
 
   return (
@@ -88,17 +105,21 @@ const Comment = ({ videoId }: CommentProps) => {
         <textarea
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
-          onKeyDown={handleKeyDown} // Enterキーで送信しないようにする
+          onKeyDown={handleKeyDown}
           placeholder="コメントを入力"
           disabled={isSubmitting}
           className="border p-2 rounded w-full resize-none"
-          rows={1} // デフォルトのサイズを1行に設定
-          style={{ height: `${Math.min(newComment.split('\n').length + 1, 4) * 1.3}em` }} // 最大4行まで拡大
+          rows={1}
+          style={{
+            height: `${Math.min(newComment.split("\n").length + 1, 4) * 1.3}em`,
+          }}
         />
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`m-2 p-2 rounded w-11 h-8 ${isSubmitting ? "bg-gray-300" : "bg-blue-500"} text-white flex justify-center items-center`} // 高さを固定
+          className={`m-2 p-2 rounded w-11 h-8 ${
+            isSubmitting ? "bg-gray-300" : "bg-blue-500"
+          } text-white flex justify-center items-center`}
         >
           <FaPaperPlane />
         </button>
@@ -113,7 +134,11 @@ const Comment = ({ videoId }: CommentProps) => {
               className="mb-2 cursor-pointer"
               onClick={() => setIsCollapsed(!isCollapsed)}
             >
-              <p>{isCollapsed ? truncateComment(comments[0].comment, 10) : comments[0].comment}</p>
+              <p>
+                {isCollapsed
+                  ? truncateComment(comments[0].comment, 10)
+                  : comments[0].comment}
+              </p>
               <small>{formatTimeAgo(comments[0].created_at)}</small>
               {comments.length > 1 && (
                 <p className="text-gray-600 ">
