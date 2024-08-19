@@ -37,7 +37,7 @@ const MyVideo = ({ user }: { user: User | null }) => {
     fetchVideos();
   }, [date, user]);
 
-  return <VideoList videos={videos} />;
+  return <VideoList videos={videos} user_id={user?.id} />;
 };
 
 export default MyVideo;

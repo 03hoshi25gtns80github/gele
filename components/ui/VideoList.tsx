@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import Comment from "@/components/ui/Comment";
 import { FaStickyNote } from "react-icons/fa";
+import DeleteVideoButton from "@/components/ui/DeleteVideoButton";
 
 interface Videos {
   id: string;
@@ -11,7 +12,12 @@ interface Videos {
   video_url: string;
 }
 
-const VideoList = ({ videos }: { videos: Videos[] }) => {
+interface VideoListProps {
+  videos: Videos[];
+  user_id?: string;
+}
+
+const VideoList = ({ videos, user_id }: VideoListProps) => {
   const supabase = createClient();
   const [videoUrls, setVideoUrls] = React.useState<string[]>([]);
 
@@ -41,7 +47,10 @@ const VideoList = ({ videos }: { videos: Videos[] }) => {
   return (
     <div className="w-2/3">
       {videos.map((video, index) => (
-        <div key={index} className="bg-gradient-to-r from-blue-200 to-blue-100 p-4 mt-4 mb-4 rounded flex shadow-lg">
+        <div
+          key={index}
+          className="bg-gradient-to-r from-blue-200 to-blue-100 p-4 mt-4 mb-4 rounded flex shadow-lg relative"
+        >
           <div className="flex-1 w-2/3">
             <h2 className="text-2xl font-bold mb-2 ml-4">{video.title}</h2>
             <video src={videoUrls[index]} controls className="w-full mb-2" />
@@ -56,6 +65,11 @@ const VideoList = ({ videos }: { videos: Videos[] }) => {
             </div>
             <Comment videoId={video.id} />
           </div>
+          {user_id && (
+            <div className="absolute bottom-4 right-4">
+              <DeleteVideoButton videoId={video.id} userId={user_id} />
+            </div>
+          )}
         </div>
       ))}
     </div>

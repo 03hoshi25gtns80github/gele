@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useCallback } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useDropzone } from "react-dropzone";
@@ -41,21 +42,55 @@ const VideoForm: React.FC<VideoFormProps> = ({ uid, onUpload }) => {
 
   const handleUpload = async (file: File) => {
     setUploading(true);
+    setError(null);
 
-    const fileExt = file.name.split(".").pop();
-    const filePath = `${uid}-${Math.random()}.${fileExt}`;
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("uid", uid);
 
-    const { data, error } = await supabase.storage
-      .from("videos")
-      .upload(filePath, file);
+    try {
+      const fileExt = file.name.split(".").pop()?.toLowerCase();
+      let filePath = "";
 
-    setUploading(false);
+      if (fileExt === "mts") {
+        const response = await fetch("/api/convert-video", {
+          method: "POST",
+          body: formData,
+        });
 
-    if (error) {
-      console.error("Error uploading video:", error.message);
-    } else {
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Video conversion failed");
+        }
+
+        const data = await response.json();
+        filePath = data.filePath;
+      } else {
+        const randomString = Math.random().toString(36).substring(2, 15);
+        const fileName = `${uid}-${randomString}.${fileExt}`;
+        const { data, error } = await supabase.storage
+          .from("videos")
+          .upload(fileName, file, {
+            contentType: `video/${fileExt}`,
+          });
+
+        if (error) {
+          throw new Error("Upload failed");
+        }
+
+        filePath = data.path;
+      }
+
       onUpload(filePath);
-      console.log("Video uploaded successfully:", data);
+    } catch (error) {
+      console.error("Error uploading video:", error);
+      setError(
+        error instanceof Error
+          ? error.message
+          : "動画のアップロード中にエラーが発生しました。"
+      );
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -94,7 +129,9 @@ const VideoForm: React.FC<VideoFormProps> = ({ uid, onUpload }) => {
         </div>
       ) : (
         <div className="mt-4 flex items-center">
-          <p className="text-2xl p-2 bg-gray-100 text-gray-500 rounded-lg">{videoFile.name}</p>
+          <p className="text-2xl p-2 bg-gray-100 text-gray-500 rounded-lg">
+            {videoFile.name}
+          </p>
           <div className="flex justify-between items-center">
             <button
               onClick={handleReset}
