@@ -47,10 +47,10 @@ const Form = ({ user }: { user: User | null }) => {
   };
 
   return (
-    <div className="w-3/5 mx-auto bg-white shadow-md rounded-lg overflow-hidden">
+    <div className="w-3/5 mx-auto mt-6 bg-white shadow-md rounded-lg overflow-hidden">
       <div className="px-6 py-4">
         <h2 className="text-2xl font-bold text-center mb-6">
-          コンテンツアップロード
+          動画を登録
         </h2>
         <div className="space-y-4">
           <TitleForm onTitleChange={handleTitleChange} />

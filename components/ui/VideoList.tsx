@@ -66,7 +66,7 @@ const VideoList = ({ videos, user_id }: VideoListProps) => {
             <Comment videoId={video.id} />
           </div>
           {user_id && (
-            <div className="absolute bottom-4 right-4">
+            <div className="absolute top-4 right-6">
               <DeleteVideoButton videoId={video.id} userId={user_id} />
             </div>
           )}

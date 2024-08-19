@@ -1,7 +1,8 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { FaPaperPlane } from "react-icons/fa";
+import CommentInput from "./CommentInput";
+import { FaEllipsisV } from "react-icons/fa";
 
 interface CommentProps {
   videoId: string;
@@ -13,14 +14,18 @@ interface Comment {
   user_id: string;
   comment: string;
   created_at: string;
+  profiles: {
+    username: string;
+  };
 }
 
 const Comment = ({ videoId }: CommentProps) => {
   const supabase = createClient();
   const [comments, setComments] = useState<Comment[]>([]);
-  const [newComment, setNewComment] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
+  const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const formatTimeAgo = (dateString: string) => {
     const date = new Date(dateString);
@@ -42,18 +47,11 @@ const Comment = ({ videoId }: CommentProps) => {
     return comment.slice(0, maxLength) + "...";
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleCommentSubmit(e as unknown as React.FormEvent);
-    }
-  };
-
   useEffect(() => {
     async function fetchComments() {
       const { data, error } = await supabase
         .from("comments")
-        .select("*")
+        .select("*, profiles(username)")
         .eq("video_id", videoId)
         .order("created_at", { ascending: false });
 
@@ -67,11 +65,22 @@ const Comment = ({ videoId }: CommentProps) => {
     fetchComments();
   }, [videoId, isSubmitting, supabase]);
 
-  const handleCommentSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpenId(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleCommentSubmit = async (comment: string) => {
     setIsSubmitting(true);
 
-    // Get the current user
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -85,8 +94,8 @@ const Comment = ({ videoId }: CommentProps) => {
     const { data, error } = await supabase.from("comments").insert([
       {
         video_id: videoId,
-        comment: newComment,
-        user_id: user.id, // Insert the user ID
+        comment: comment,
+        user_id: user.id,
       },
     ]);
 
@@ -96,63 +105,56 @@ const Comment = ({ videoId }: CommentProps) => {
       setComments([data[0], ...comments]);
     }
     setIsSubmitting(false);
-    setNewComment(""); // Reset after submission
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    console.log("Deleting comment with ID:", commentId); // Added: log commentId
+    const { error } = await supabase
+      .from("comments")
+      .delete()
+      .eq("id", commentId);
+
+    if (error) {
+      console.error("Error deleting comment: ", error);
+    } else {
+      setComments(comments.filter((comment) => comment.id !== commentId));
+    }
   };
 
   return (
     <div className="bg-white p-4 rounded">
-      <form onSubmit={handleCommentSubmit} className="mb-2 flex">
-        <textarea
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="コメントを入力"
-          disabled={isSubmitting}
-          className="border p-2 rounded w-full resize-none"
-          rows={1}
-          style={{
-            height: `${Math.min(newComment.split("\n").length + 1, 4) * 1.3}em`,
-          }}
-        />
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className={`m-2 p-2 rounded w-11 h-8 ${
-            isSubmitting ? "bg-gray-300" : "bg-blue-500"
-          } text-white flex justify-center items-center`}
-        >
-          <FaPaperPlane />
-        </button>
-      </form>
+      <CommentInput onSubmit={handleCommentSubmit} isSubmitting={isSubmitting} />
       <div className="bg-gray-100 p-2 rounded shadow-md">
         {comments.length === 0 ? (
           <p>まだコメントがありません</p>
         ) : (
           <>
-            <div
-              key={comments[0].id}
-              className="mb-2 cursor-pointer"
-              onClick={() => setIsCollapsed(!isCollapsed)}
-            >
-              <p>
-                {isCollapsed
-                  ? truncateComment(comments[0].comment, 10)
-                  : comments[0].comment}
-              </p>
-              <small>{formatTimeAgo(comments[0].created_at)}</small>
-              {comments.length > 1 && (
-                <p className="text-gray-600 ">
-                  {isCollapsed ? "コメントを表示" : "コメントを隠す"}
-                </p>
-              )}
-            </div>
-            {!isCollapsed &&
-              comments.slice(1).map((comment) => (
-                <div key={comment.id} className="mb-2">
-                  <p>{comment.comment}</p>
-                  <small>{formatTimeAgo(comment.created_at)}</small>
+            {comments.map((comment) => (
+              <div key={comment.id} className="relative">
+                <p>{comment.comment}</p>
+                <small>
+                  {formatTimeAgo(comment.created_at)} - {comment.profiles.username}
+                </small>
+                <div className="absolute top-0 right-0" ref={menuRef}>
+                  <button
+                    onClick={() => setMenuOpenId(menuOpenId === comment.id ? null : comment.id)}
+                    className="p-2"
+                  >
+                    <FaEllipsisV />
+                  </button>
+                  {menuOpenId === comment.id && (
+                    <div className="absolute right-6 w-12 bg-red-500 border rounded shadow-lg z-50" ref={menuRef}>
+                      <button
+                        onClick={() => {handleDeleteComment(comment.id);}}
+                        className="block w-full text-left px-2 py-2 text-sm text-white hover:bg-red-100"
+                      >
+                        削除
+                      </button>
+                    </div>
+                  )}
                 </div>
-              ))}
+              </div>
+            ))}
           </>
         )}
       </div>
