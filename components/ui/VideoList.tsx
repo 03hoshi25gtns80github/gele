@@ -2,8 +2,9 @@
 import React, { useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import Comment from "@/components/ui/Comment";
-import { FaStickyNote } from "react-icons/fa";
+import { FaStickyNote, FaEdit } from "react-icons/fa";
 import DeleteVideoButton from "@/components/ui/DeleteVideoButton";
+import EditVideos from "@/components/ui/EditVideos";
 
 interface Videos {
   id: string;
@@ -20,6 +21,9 @@ interface VideoListProps {
 const VideoList = ({ videos, user_id }: VideoListProps) => {
   const supabase = createClient();
   const [videoUrls, setVideoUrls] = React.useState<string[]>([]);
+  const [editIndex, setEditIndex] = React.useState<number | null>(null);
+  const [editedTitle, setEditedTitle] = React.useState<string>("");
+  const [editedMemo, setEditedMemo] = React.useState<string>("");
 
   useEffect(() => {
     async function createVideoUrls(videos: Videos[]) {
@@ -43,6 +47,33 @@ const VideoList = ({ videos, user_id }: VideoListProps) => {
 
     if (videos.length > 0) createVideoUrls(videos);
   }, [videos, supabase]);
+
+  const handleEdit = (index: number, title: string, memo: string) => {
+    setEditIndex(index);
+    setEditedTitle(title);
+    setEditedMemo(memo);
+  };
+
+  const handleSave = async (videoId: string, index: number) => {
+    try {
+      const { error } = await supabase
+        .from("videos")
+        .update({ title: editedTitle, memo: editedMemo })
+        .eq("id", videoId);
+      if (error) throw error;
+
+      // Update the local state to reflect the changes immediately
+      const updatedVideos = [...videos];
+      updatedVideos[index] = { ...updatedVideos[index], title: editedTitle, memo: editedMemo };
+      setEditIndex(null);
+    } catch (error) {
+      console.log("Error updating video: ", error);
+    }
+  };
+
+  const handleClose = () => {
+    setEditIndex(null);
+  };
 
   return (
     <div className="w-4/5">
@@ -70,8 +101,26 @@ const VideoList = ({ videos, user_id }: VideoListProps) => {
               <DeleteVideoButton videoId={video.id} userId={user_id} />
             </div>
           )}
+          {user_id && (
+            <div className="absolute top-3 right-14">
+              <FaEdit
+                className="ml-2 mb-2 text-gray-400 text-3xl cursor-pointer"
+                onClick={() => handleEdit(index, video.title, video.memo)}
+              />
+            </div>
+          )}
         </div>
       ))}
+      {editIndex !== null && (
+        <EditVideos
+          title={editedTitle}
+          memo={editedMemo}
+          onSave={() => handleSave(videos[editIndex].id, editIndex)}
+          onClose={handleClose}
+          setEditedTitle={setEditedTitle}
+          setEditedMemo={setEditedMemo}
+        />
+      )}
     </div>
   );
 };
