@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 interface HeaderProps {
@@ -14,6 +15,29 @@ const Header: React.FC<HeaderProps> = ({ id }) => {
   const supabase = createClient();
   const [username, setUsername] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const router = useRouter();
+
+  const handleViewCalendar = async (id: string) => {
+    if (!id) return;
+
+    const supabase = createClient();
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
+    if (error) {
+      console.error("フレンド情報取得エラー:", error);
+      return;
+    }
+
+    if (user?.id === id) {
+      router.push("/my-calendar");
+    } else {
+      const friendUserId = id;
+      router.push(`/friend-calendar?friend=${friendUserId}`);
+    }
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -74,7 +98,9 @@ const Header: React.FC<HeaderProps> = ({ id }) => {
             </div>
           )}
           <div className="text-blue-900 text-3xl font-bold ml-4 mr-2">
-            {username ? `${username}'s カレンダー` : WELCOME_MESSAGE}
+            <button onClick={() => id && handleViewCalendar(id)}>
+              {username ? `${username}'s カレンダー` : WELCOME_MESSAGE}
+            </button>
           </div>
         </div>
         <nav>
