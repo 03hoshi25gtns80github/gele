@@ -15,6 +15,7 @@ const Header: React.FC<HeaderProps> = ({ id }) => {
   const supabase = createClient();
   const [username, setUsername] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false); // ログイン状態を管理
   const router = useRouter();
 
   const handleViewCalendar = async (id: string) => {
@@ -82,6 +83,15 @@ const Header: React.FC<HeaderProps> = ({ id }) => {
     fetchProfile();
   }, [id]);
 
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setIsLoggedIn(!!user); // ユーザーが存在するかどうかでログイン状態を設定
+    };
+
+    checkUser();
+  }, []);
+
   return (
     <header className="bg-gradient-to-r from-blue-200 via-blue-400 to-blue-200 p-2 shadow-lg w-full z-30">
       <div className="flex justify-between items-center">
@@ -103,44 +113,46 @@ const Header: React.FC<HeaderProps> = ({ id }) => {
             </button>
           </div>
         </div>
-        <nav>
-          <ul className="flex space-x-6">
-            <li>
-              <Link
-                href="/my-calendar"
-                className="font-bold text-blue-900 hover:text-blue-600 transition duration-300"
-              >
-                マイカレンダー
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/account"
-                className="font-bold text-blue-900 hover:text-blue-600 transition duration-300"
-              >
-                プロフィール更新
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/settings"
-                className="font-bold text-blue-900 hover:text-blue-600 transition duration-300"
-              >
-                設定
-              </Link>
-            </li>
-            <li>
-              <form action="/auth/signout" method="post" className="inline">
-                <button
+        {isLoggedIn && ( // ログインしている場合のみナビゲーションを表示
+          <nav>
+            <ul className="flex space-x-6">
+              <li>
+                <Link
+                  href="/my-calendar"
                   className="font-bold text-blue-900 hover:text-blue-600 transition duration-300"
-                  type="submit"
                 >
-                  ログアウト
-                </button>
-              </form>
-            </li>
-          </ul>
-        </nav>
+                  マイカレンダー
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/account"
+                  className="font-bold text-blue-900 hover:text-blue-600 transition duration-300"
+                >
+                  プロフィール更新
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/settings"
+                  className="font-bold text-blue-900 hover:text-blue-600 transition duration-300"
+                >
+                  設定
+                </Link>
+              </li>
+              <li>
+                <form action="/auth/signout" method="post" className="inline">
+                  <button
+                    className="font-bold text-blue-900 hover:text-blue-600 transition duration-300"
+                    type="submit"
+                  >
+                    ログアウト
+                  </button>
+                </form>
+              </li>
+            </ul>
+          </nav>
+        )}
       </div>
     </header>
   );

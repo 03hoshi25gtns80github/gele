@@ -31,15 +31,15 @@ export default function Home() {
             transition={{ duration: 0.3 }}
           >
             <img
-              src="/images/ski-background.jpg"
+              src="/images/calendar2.png"
               alt="FormCalendar"
               className="w-80 h-70 mx-auto rounded-full shadow-lg md:order-2"
             />
             <div className="md:mr-8 mt-8 md:mt-0">
               <h2 className="text-gray-800 text-4xl font-bold">
-                FormCalendar
+                My Calendar
               </h2>
-              <p className="text-gray-800 text-2xl">動画とメモをカレンダーに登録</p>
+              <p className="text-gray-800 text-2xl">カレンダーでいつでも振り返り</p>
             </div>
           </motion.div>
           <motion.div
@@ -48,15 +48,15 @@ export default function Home() {
             transition={{ duration: 0.3 }}
           >
             <img
-              src="/images/ski-background.jpg"
+              src="/images/02.jpg"
               alt="My calendar"
               className="w-80 h-70 mx-auto rounded-full shadow-lg"
             />
             <div className="md:ml-8 mt-8 md:mt-0">
               <h2 className="text-gray-800 text-4xl font-bold">
-                My calendar
+                video&memo&comment
               </h2>
-              <p className="text-gray-800 text-2xl">カレンダーでいつでも振り返り</p>
+              <p className="text-gray-800 text-2xl">動画とメモとコメントを記録</p>
             </div>
           </motion.div>
           <motion.div

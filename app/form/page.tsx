@@ -1,6 +1,6 @@
 import Form from "@/app/form/Form";
 import { createClient } from "@/utils/supabase/server";
-import Sidebar from "@/components/Sidebar";
+import Header from "@/components/Header";
 
 export default async function Account() {
   const supabase = createClient();
@@ -11,6 +11,7 @@ export default async function Account() {
 
   return (
     <>
+      <Header id={user?.id || ""} />
       <Form user={user} />
     </>
   );
