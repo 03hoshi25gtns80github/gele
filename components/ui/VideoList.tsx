@@ -45,11 +45,11 @@ const VideoList = ({ videos, user_id }: VideoListProps) => {
   }, [videos, supabase]);
 
   return (
-    <div className="w-2/3">
+    <div className="w-4/5">
       {videos.map((video, index) => (
         <div
           key={index}
-          className="bg-gradient-to-r from-blue-200 to-blue-100 p-4 mt-4 mb-4 rounded flex shadow-lg relative"
+          className="bg-gradient-to-r from-blue-200 to-blue-100 p-4 mt-2 mb-4 rounded flex shadow-lg relative"
         >
           <div className="flex-1 w-2/3">
             <h2 className="text-2xl font-bold mb-2 ml-4">{video.title}</h2>

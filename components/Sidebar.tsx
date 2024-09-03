@@ -3,20 +3,20 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 const Sidebar = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false); //デフォルトでたたむならtrue
+  const [isCollapsed, setIsCollapsed] = useState(true); //デフォルトでたたむならtrue
 
   const handleMouseEnter = () => {
     setIsCollapsed(false);
   };
 
   const handleMouseLeave = () => {
-    setIsCollapsed(false); // マウスが離れたらサイドバーを閉じる場青はtrueにする
+    setIsCollapsed(true); // マウスが離れたらサイドバーを閉じる場青はtrueにする
   };
 
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
       if (event.clientX > 256) {
-        setIsCollapsed(false); // マウスが離れたらサイドバーを閉じる場合はtrueにする
+        setIsCollapsed(true); // マウスが離れたらサイドバーを閉じる場合はtrueにする
       }
     };
 
@@ -41,7 +41,7 @@ const Sidebar = () => {
         gele-ch
       </div>
       <aside
-        className={`bg-gray-200 fixed top-0 z-20 transition-all duration-300 ${
+        className={`bg-gray-200 bg-opacity-80 fixed top-0 z-45 transition-all duration-300 ${
           isCollapsed ? "-left-64" : "left-0"
         } w-55 h-screen`}
         onMouseEnter={handleMouseEnter}
@@ -77,7 +77,7 @@ const Sidebar = () => {
                 </Link>
               </li>
               <li>
-                <div className="font-bold block hover:bg-blue-400 text-black p-2 rounded">
+                <div className="font-bold block hover:bg-red-400 text-black p-2 rounded">
                   <form action="/auth/signout" method="post">
                     <button className="button block" type="submit">
                       ログアウト

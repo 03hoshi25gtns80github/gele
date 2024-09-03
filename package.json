@@ -7,6 +7,10 @@
   },
   "dependencies": {
     "@ffmpeg/ffmpeg": "^0.12.10",
+    "@fullcalendar/common": "^5.11.5",
+    "@fullcalendar/daygrid": "^6.1.15",
+    "@fullcalendar/interaction": "^6.1.15",
+    "@fullcalendar/react": "^6.1.15",
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
     "@types/fluent-ffmpeg": "^2.1.25",

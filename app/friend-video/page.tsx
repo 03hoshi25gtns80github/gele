@@ -13,7 +13,6 @@ export default async function Page() {
 
   return (
     <>
-      <Sidebar />
       <FriendVideo />
       <div>
         <FriendsButton user={user as User} />

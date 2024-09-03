@@ -1,7 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { type User } from "@supabase/supabase-js";
 import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
 import MyCalendar from "./MyCalendar";
 import FriendsButton from "@/components/friends/FriendsButton";
 
@@ -14,12 +13,11 @@ export default async function Page() {
   return (
     <>
       <Header id={user?.id || ""} />
-      <Sidebar />
-      <div className="justify-center">
-        <div className="mt-6 flex flex-col items-center">
+      <div className="flex justify-center">
+        <div className="mt-2 w-full max-w-screen-lg items-center z-40">
           <MyCalendar initialUser={user as User} />
         </div>
-        <div>
+        <div className="z-60">
           <FriendsButton user={user as User} />
         </div>
       </div>

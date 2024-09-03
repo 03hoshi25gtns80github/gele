@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import VideoList from "@/components/ui/VideoList";
+import Header from "@/components/Header";
 import { useSearchParams } from "next/navigation";
 
 interface Videos {
@@ -37,7 +38,12 @@ const FriendVideo = () => {
     fetchVideos();
   }, [date, friendId]);
 
-  return <VideoList videos={videos} />;
+  return (
+    <>
+      <Header id={friendId} />
+      <VideoList videos={videos} />
+    </>
+  );
 };
 
 export default FriendVideo;

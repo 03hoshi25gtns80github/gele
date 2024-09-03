@@ -11,7 +11,6 @@ export default async function Account() {
 
   return (
     <>
-      <Sidebar />
       <Form user={user} />
     </>
   );

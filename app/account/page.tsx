@@ -1,5 +1,5 @@
 import AccountForm from "./account-form";
-import Sidebar from "@/components/Sidebar";
+import Header from "@/components/Header";
 import { createClient } from "@/utils/supabase/server";
 
 export default async function Account() {
@@ -11,8 +11,8 @@ export default async function Account() {
 
   return (
     <>
-      <Sidebar />
-      <div className="mt-10 justify-center">
+      <Header id={user?.id || ""} />
+      <div className="mt-2 justify-center">
         <AccountForm user={user} />
       </div>
     </>

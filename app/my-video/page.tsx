@@ -1,6 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { type User } from "@supabase/supabase-js";
-import Sidebar from "@/components/Sidebar";
+import Header from "@/components/Header";
 import MyVideo from "./MyVideo";
 import FriendsButton from "@/components/friends/FriendsButton";
 import FormButton from "@/components/ui/FormButton";
@@ -14,7 +14,7 @@ export default async function Page() {
 
   return (
     <>
-      <Sidebar />
+      <Header id={user?.id || ""} />
       <MyVideo user={user as User} />
       <div>
         <FormButton />

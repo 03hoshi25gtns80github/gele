@@ -44,8 +44,7 @@ const FriendCalendar: React.FC = () => {
   return (
     <>
       <Header id={friendId} />
-      <Sidebar />
-      <div className="mt-6 flex flex-col items-center">
+      <div className="mt-2 flex flex-col items-center">
         <Calendar dates={dates} onDateSelect={handleDateSelect} />
       </div>
     </>

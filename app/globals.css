@@ -24,4 +24,11 @@
   * {
     @apply border-foreground/20;
   }
+
+  body {
+    background-image: url('/images/app-background.jpg'); /* ここで背景画像を設定 */
+    background-size: cover; /* 画像をカバーするように設定 */
+    background-position: center; /* 画像を中央に配置 */
+    background-repeat: no-repeat; /* 画像を繰り返さない */
+  }
 }

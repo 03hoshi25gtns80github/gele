@@ -1,6 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
 import { type User } from "@supabase/supabase-js";
-import Sidebar from "@/components/Sidebar";
 import FriendCalendar from "./FriendCalendar";
 import FriendsButton from "@/components/friends/FriendsButton";
 
