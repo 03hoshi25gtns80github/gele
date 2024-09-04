@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { createClient } from "@/utils/supabase/client";
 import CommentInput from "./CommentInput";
-import { FaEllipsisV } from "react-icons/fa";
+import { FaEllipsisV, FaReply } from "react-icons/fa";
 
 interface CommentProps {
   videoId: string;
@@ -25,7 +25,9 @@ const Comment = ({ videoId }: CommentProps) => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
   const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
+  const [loggedInUserId, setLoggedInUserId] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const commentInputRef = useRef<{ setReplyTo: (username: string) => void } | null>(null);
 
   const formatTimeAgo = (dateString: string) => {
     const date = new Date(dateString);
@@ -36,9 +38,12 @@ const Comment = ({ videoId }: CommentProps) => {
       return "今";
     } else if (diffInMinutes < 60) {
       return `${diffInMinutes}分前`;
-    } else {
+    } else if (diffInMinutes < 1440) {
       const diffInHours = Math.floor(diffInMinutes / 60);
       return `${diffInHours}時間前`;
+    } else {
+      const diffInDays = Math.floor(diffInMinutes / 1440);
+      return `${diffInDays}日前`;
     }
   };
 
@@ -64,6 +69,16 @@ const Comment = ({ videoId }: CommentProps) => {
 
     fetchComments();
   }, [videoId, isSubmitting, supabase]);
+
+  useEffect(() => {
+    async function fetchUser() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setLoggedInUserId(user.id);
+      }
+    }
+    fetchUser();
+  }, [supabase]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -108,7 +123,7 @@ const Comment = ({ videoId }: CommentProps) => {
   };
 
   const handleDeleteComment = async (commentId: string) => {
-    console.log("Deleting comment with ID:", commentId); // Added: log commentId
+    console.log("Deleting comment with ID:", commentId);
     const { error } = await supabase
       .from("comments")
       .delete()
@@ -121,11 +136,29 @@ const Comment = ({ videoId }: CommentProps) => {
     }
   };
 
+  const handleReply = async (userId: string) => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("username")
+      .eq("id", userId)
+      .single();
+
+    if (error) {
+      console.error("Error fetching username: ", error);
+    } else if (data) {
+      const username = data.username;
+      if (commentInputRef.current) {
+        commentInputRef.current.setReplyTo(username);
+      }
+    }
+  };
+
   return (
     <div className="bg-white p-4 rounded">
       <CommentInput
         onSubmit={handleCommentSubmit}
         isSubmitting={isSubmitting}
+        ref={commentInputRef}
       />
       <div className="bg-gray-100 p-2 rounded shadow-md">
         {comments.length === 0 ? (
@@ -145,36 +178,44 @@ const Comment = ({ videoId }: CommentProps) => {
                 {formatTimeAgo(comments[0].created_at)} -{" "}
                 {comments[0].profiles.username}
               </small>
-              <div className="absolute top-0 right-[-9px]" ref={menuRef}>
-                <button
-                  onClick={() =>
-                    setMenuOpenId(
-                      menuOpenId === comments[0].id ? null : comments[0].id
-                    )
-                  }
-                  className="mt-1"
-                >
-                  <FaEllipsisV />
-                </button>
-                {menuOpenId === comments[0].id && (
-                  <div
-                    className="absolute right-4 w-12 bg-red-500 border rounded shadow-lg z-50"
-                    ref={menuRef}
+              <button
+                onClick={() => handleReply(comments[0].user_id)}
+                className="ml-2 text-gray-700"
+              >
+                <FaReply />
+              </button>
+              {loggedInUserId === comments[0].user_id && (
+                <div className="absolute top-0 right-[-9px]" ref={menuRef}>
+                  <button
+                    onClick={() =>
+                      setMenuOpenId(
+                        menuOpenId === comments[0].id ? null : comments[0].id
+                      )
+                    }
+                    className="mt-1"
                   >
-                    <button
-                      onClick={() => {
-                        handleDeleteComment(comments[0].id);
-                      }}
-                      className="block w-full text-left px-2 py-2 text-sm text-white hover:bg-red-100"
+                    <FaEllipsisV />
+                  </button>
+                  {menuOpenId === comments[0].id && (
+                    <div
+                      className="absolute right-4 w-12 bg-red-500 border rounded shadow-lg z-50"
+                      ref={menuRef}
                     >
-                      削除
-                    </button>
-                  </div>
-                )}
-              </div>
+                      <button
+                        onClick={() => {
+                          handleDeleteComment(comments[0].id);
+                        }}
+                        className="block w-full text-left px-2 py-2 text-sm text-white hover:bg-red-100"
+                      >
+                        削除
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
               {comments.length > 1 && (
                 <p 
-                  className="text-blue-500 cursor-pointer"
+                  className="text-blue-500 mt-2 mb-1 cursor-pointer"
                   onClick={() => setIsCollapsed(!isCollapsed)}
                 >
                   {isCollapsed ? "コメントを表示" : "コメントを隠す"}
@@ -189,33 +230,41 @@ const Comment = ({ videoId }: CommentProps) => {
                     {formatTimeAgo(comment.created_at)} -{" "}
                     {comment.profiles.username}
                   </small>
-                  <div className="absolute top-0 right-[-9px]" ref={menuRef}>
-                    <button
-                      onClick={() =>
-                        setMenuOpenId(
-                          menuOpenId === comment.id ? null : comment.id
-                        )
-                      }
-                      className="mt-1"
-                    >
-                      <FaEllipsisV />
-                    </button>
-                    {menuOpenId === comment.id && (
-                      <div
-                        className="absolute right-4 w-12 bg-red-500 border rounded shadow-lg z-50"
-                        ref={menuRef}
+                  <button
+                    onClick={() => handleReply(comment.user_id)}
+                    className="ml-2 text-gray-700"
+                  >
+                    <FaReply />
+                  </button>
+                  {loggedInUserId === comment.user_id && (
+                    <div className="absolute top-0 right-[-9px]" ref={menuRef}>
+                      <button
+                        onClick={() =>
+                          setMenuOpenId(
+                            menuOpenId === comment.id ? null : comment.id
+                          )
+                        }
+                        className="mt-1"
                       >
-                        <button
-                          onClick={() => {
-                            handleDeleteComment(comment.id);
-                          }}
-                          className="block w-full text-left px-2 py-2 text-sm text-white hover:bg-red-100"
+                        <FaEllipsisV />
+                      </button>
+                      {menuOpenId === comment.id && (
+                        <div
+                          className="absolute right-4 w-12 bg-red-500 border rounded shadow-lg z-50"
+                          ref={menuRef}
                         >
-                          削除
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                          <button
+                            onClick={() => {
+                              handleDeleteComment(comment.id);
+                            }}
+                            className="block w-full text-left px-2 py-2 text-sm text-white hover:bg-red-100"
+                          >
+                            削除
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               ))}
           </>

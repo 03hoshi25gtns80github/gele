@@ -6,7 +6,7 @@ import { tmpdir } from "os";
 import { join } from "path";
 import { writeFile, unlink, readFile } from "fs/promises";
 
-export async function POST(request: Request) {
+export async function POST(request: Request): Promise<Response> {
   const supabase = createClient();
 
   // リクエストからファイルを取得
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
 
     await writeFile(tempInputPath, buffer);
 
-    return new Promise((resolve) => {
+    return new Promise<Response>((resolve) => {
       ffmpeg(tempInputPath)
         .output(tempOutputPath)
         .outputFormat("mp4")
