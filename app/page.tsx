@@ -15,7 +15,7 @@ export default function Home() {
           transition={{ duration: 1 }}
         >
           <h1 className="text-gray-800 text-5xl md:text-6xl font-bold">gele-ch</h1>
-          <p className="text-gray-800 text-2xl md:text-3xl mt-4">
+          <p className="text-gray-800 text-xl md:text-3xl mt-4">
             毎日の滑りをカレンダーに記録
           </p>
           <Link href="/login" legacyBehavior>
