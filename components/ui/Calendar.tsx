@@ -60,10 +60,16 @@ const Calendar: React.FC<CalendarProps> = ({ dates, onDateSelect }) => {
           height="100%"
           contentHeight="auto"
           headerToolbar={{
-            left: "",
-            center: "title",
-            right: "prev,next today",
+            left: "title",
+            center: "",
+            right: "today prev,next",
           }}
+          buttonText={{
+            today: "今日",
+            prev: "＜",
+            next: "＞",
+          }}
+          titleFormat={{ year: "numeric", month: "numeric" }} // ここを追加
         />
       </div>
     </div>
