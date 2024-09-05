@@ -171,7 +171,7 @@ const Comment = ({ videoId }: CommentProps) => {
             >
               <p>
                 {isCollapsed
-                  ? truncateComment(comments[0].comment, 12)
+                  ? truncateComment(comments[0].comment, 16)
                   : comments[0].comment}
               </p>
               <small>

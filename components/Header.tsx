@@ -105,7 +105,7 @@ const Header: React.FC<HeaderProps> = ({ id }) => {
                   alt="User Avatar"
                   width={55}
                   height={55}
-                  className="rounded-full shadow-lg md:w-16 md:h-16"
+                  className="rounded-full shadow-lg w-16 h-16"
                 />
               </div>
             )}

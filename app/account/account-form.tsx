@@ -85,7 +85,7 @@ export default function AccountForm({ user }: { user: User | null }) {
         <div className="flex-grow">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700">ユーザー名</label>
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700">ユーザー名(半角英字)</label>
               <input
                 id="username"
                 type="text"
