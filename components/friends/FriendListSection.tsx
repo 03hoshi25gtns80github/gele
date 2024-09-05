@@ -72,7 +72,7 @@ const FriendListSection: React.FC<FriendListSectionProps> = ({
                 onClick={() => handleViewCalendar(friend.id)}
                 className="bg-green-500 text-white px-2 py-1 rounded text-sm"
               >
-                カレンダーを見る
+                カレンダー表示
               </button>
             )}
             {friend.type === "received" && friend.status === "pending" && (

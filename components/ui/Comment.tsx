@@ -154,7 +154,7 @@ const Comment = ({ videoId }: CommentProps) => {
   };
 
   return (
-    <div className="bg-white p-4 rounded">
+    <div className="bg-white p-2 md:p-4 rounded">
       <CommentInput
         onSubmit={handleCommentSubmit}
         isSubmitting={isSubmitting}
