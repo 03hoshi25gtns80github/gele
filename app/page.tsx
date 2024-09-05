@@ -14,17 +14,17 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
         >
-          <h1 className="text-gray-800 text-5xl md:text-6xl font-bold">gele-ch</h1>
-          <p className="text-gray-800 text-xl md:text-3xl mt-4">
+          <h1 className="text-gray-800 mt-24 text-5xl md:text-6xl font-bold">gele-ch</h1>
+          <p className="text-gray-800 text-xl md:text-3xl mt-6">
             毎日の滑りをカレンダーに記録
           </p>
           <Link href="/login" legacyBehavior>
-            <a className="mt-6 inline-block bg-indigo-400 text-gray-800 text-xl font-bold py-3 px-6 rounded-full hover:bg-indigo-500 transition duration-300">
+            <a className="mt-16 inline-block bg-indigo-400 text-gray-800 text-xl font-bold py-3 px-6 rounded-full hover:bg-indigo-500 transition duration-300">
               Log in or Sign up
             </a>
           </Link>
         </motion.div>
-        <div className="flex flex-col items-center mt-20 space-y-20">
+        <div className="flex flex-col items-center mt-40 space-y-20">
           <motion.div
             className="flex flex-col items-center text-center md:flex-row md:items-center md:text-center"
             whileHover={{ scale: 1.1 }}
