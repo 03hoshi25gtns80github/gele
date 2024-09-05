@@ -4,6 +4,7 @@ import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import MobileNav from "./MobileNav";
 
 interface HeaderProps {
   id: string | null;
@@ -93,68 +94,71 @@ const Header: React.FC<HeaderProps> = ({ id }) => {
   }, []);
 
   return (
-    <header className="bg-gradient-to-r from-blue-200 via-blue-400 to-blue-200 p-2 shadow-lg w-full z-30">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center bg-white rounded-full ml-4 shadow-md">
-          {avatarUrl && (
-            <div className="ml-2 border-4 border-gray-400 p-1 rounded-full">
-              <Image
-                src={avatarUrl}
-                alt="User Avatar"
-                width={65}
-                height={65}
-                className="rounded-full shadow-lg"
-              />
+    <>
+      <header className="bg-gradient-to-r from-blue-200 via-blue-400 to-blue-200 p-2 shadow-lg w-full z-30">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center bg-white rounded-full ml-4 shadow-md">
+            {avatarUrl && (
+              <div className="ml-2 border-4 border-gray-400 p-1 rounded-full">
+                <Image
+                  src={avatarUrl}
+                  alt="User Avatar"
+                  width={40}
+                  height={40}
+                  className="rounded-full shadow-lg md:w-16 md:h-16"
+                />
+              </div>
+            )}
+            <div className="text-blue-900 text-xl md:text-3xl font-bold ml-1 mr-2 md:ml-4 md:mr-2">
+              <button onClick={() => id && handleViewCalendar(id)}>
+                {username ? `${username}'s カレンダー` : WELCOME_MESSAGE}
+              </button>
             </div>
-          )}
-          <div className="text-blue-900 text-3xl font-bold ml-4 mr-2">
-            <button onClick={() => id && handleViewCalendar(id)}>
-              {username ? `${username}'s カレンダー` : WELCOME_MESSAGE}
-            </button>
           </div>
-        </div>
-        {isLoggedIn && ( // ログインしている場合のみナビゲーションを表示
-          <nav>
-            <ul className="flex space-x-6">
-              <li>
-                <Link
-                  href="/my-calendar"
-                  className="font-bold text-blue-900 hover:text-blue-600 transition duration-300"
-                >
-                  マイカレンダー
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/account"
-                  className="font-bold text-blue-900 hover:text-blue-600 transition duration-300"
-                >
-                  プロフィール更新
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/settings"
-                  className="font-bold text-blue-900 hover:text-blue-600 transition duration-300"
-                >
-                  設定
-                </Link>
-              </li>
-              <li>
-                <form action="/auth/signout" method="post" className="inline">
-                  <button
+          {isLoggedIn && (
+            <nav className="hidden md:flex space-x-6">
+              <ul className="flex space-x-6 text-sm md:text-base">
+                <li>
+                  <Link
+                    href="/my-calendar"
                     className="font-bold text-blue-900 hover:text-blue-600 transition duration-300"
-                    type="submit"
                   >
-                    ログアウト
-                  </button>
-                </form>
-              </li>
-            </ul>
-          </nav>
-        )}
-      </div>
-    </header>
+                    マイカレンダー
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/account"
+                    className="font-bold text-blue-900 hover:text-blue-600 transition duration-300"
+                  >
+                    プロフィール更新
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/settings"
+                    className="font-bold text-blue-900 hover:text-blue-600 transition duration-300"
+                  >
+                    設定
+                  </Link>
+                </li>
+                <li>
+                  <form action="/auth/signout" method="post" className="inline">
+                    <button
+                      className="font-bold text-blue-900 hover:text-blue-600 transition duration-300"
+                      type="submit"
+                    >
+                      ログアウト
+                    </button>
+                  </form>
+                </li>
+              </ul>
+            </nav>
+          )}
+        </div>
+      </header>
+      {isLoggedIn && <MobileNav />} {/* モバイルナビゲーションを追加 */}
+    </>
   );
 };
 

@@ -129,7 +129,7 @@ const VideoForm: React.FC<VideoFormProps> = ({ uid, onUpload }) => {
         </div>
       ) : (
         <div className="mt-4 flex items-center">
-          <p className="text-2xl p-2 bg-gray-100 text-gray-500 rounded-lg">
+          <p className="text-sm md:text-2xl p-2 bg-gray-100 text-gray-500 rounded-lg">
             {videoFile.name}
           </p>
           <div className="flex justify-between items-center">

@@ -47,7 +47,7 @@ const Form = ({ user }: { user: User | null }) => {
   };
 
   return (
-    <div className="w-3/5 mx-auto mt-6 bg-white shadow-md rounded-lg overflow-hidden">
+    <div className="w-3/5 mx-auto mt-2 mb-24 bg-white shadow-md rounded-lg overflow-hidden md:mt-6">
       <div className="px-6 py-4">
         <h2 className="text-2xl font-bold text-center mb-6">
           動画を登録

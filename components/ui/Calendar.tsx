@@ -41,22 +41,31 @@ const Calendar: React.FC<CalendarProps> = ({ dates, onDateSelect }) => {
 
   return (
     <div
+      className="w-full h-full md:w-[120vh] md:h-[100vh] bg-white bg-opacity-70 p-2 md:p-10 rounded-lg flex justify-center items-center"
       style={{
-        width: "120vh",
-        height: "100vh",
+        maxWidth: "100vw",
+        maxHeight: "100vh",
         backgroundColor: "rgba(255, 255, 255, 0.7)",
         padding: "10px",
         borderRadius: "10px",
       }}
     >
-      <FullCalendar
-        plugins={[dayGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        events={events}
-        eventContent={eventContent}
-        dateClick={handleDateClick}
-        height="100%"
-      />
+      <div className="w-full h-full">
+        <FullCalendar
+          plugins={[dayGridPlugin, interactionPlugin]}
+          initialView="dayGridMonth"
+          events={events}
+          eventContent={eventContent}
+          dateClick={handleDateClick}
+          height="100%"
+          contentHeight="auto"
+          headerToolbar={{
+            left: "",
+            center: "title",
+            right: "prev,next today",
+          }}
+        />
+      </div>
     </div>
   );
 };
