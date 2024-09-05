@@ -103,13 +103,13 @@ const Header: React.FC<HeaderProps> = ({ id }) => {
                 <Image
                   src={avatarUrl}
                   alt="User Avatar"
-                  width={40}
-                  height={40}
+                  width={55}
+                  height={55}
                   className="rounded-full shadow-lg md:w-16 md:h-16"
                 />
               </div>
             )}
-            <div className="text-blue-900 text-xl md:text-3xl font-bold ml-1 mr-2 md:ml-4 md:mr-2">
+            <div className="text-blue-900 text-2xl md:text-3xl font-bold ml-1 mr-2 md:ml-4 md:mr-2">
               <button onClick={() => id && handleViewCalendar(id)}>
                 {username ? `${username}'s カレンダー` : WELCOME_MESSAGE}
               </button>
