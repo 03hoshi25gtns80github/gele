@@ -76,33 +76,35 @@ const VideoList = ({ videos, user_id }: VideoListProps) => {
   };
 
   return (
-    <div className="w-4/5">
+    <div className="w-11/12 mb-24 md:w-4/5">
       {videos.map((video, index) => (
         <div
           key={index}
-          className="bg-gradient-to-r from-blue-200 to-blue-100 p-4 mt-2 mb-4 rounded flex shadow-lg relative"
+          className="bg-gradient-to-r from-blue-200 to-blue-100 p-2 md:p-4 mt-2 mb-4 rounded md:flex shadow-lg relative"
         >
-          <div className="flex-1 w-2/3">
-            <h2 className="text-2xl font-bold mb-2 ml-4">{video.title}</h2>
+          <div className="md:flex-1 w-full md:w-2/3">
+            <h2 className="text-xl md:text-2xl font-bold mb-2 md:ml-4">
+              {video.title}
+            </h2>
             <video src={videoUrls[index]} controls className="w-full mb-2" />
           </div>
-          <div className="mt-10 ml-4 w-1/3">
-            <div className="mb-4 bg-white p-2 rounded">
+          <div className="md:mt-10 md:ml-4 w-full md:w-1/3">
+            <div className="mb-2 md:mb-4 bg-white p-2 rounded">
               <div className="flex items-center border-b-2 border-gray-400">
-                <FaStickyNote className="ml-2 mb-2 text-gray-400 text-3xl" />
-                <div className="text-xl font-bold ml-2">メモ</div>
+                <FaStickyNote className="md:ml-2 md:mb-2 text-gray-400 text-xl md:text-3xl" />
+                <div className="md:text-xl font-bold md:ml-2">メモ</div>
               </div>
               <p className="mt-2">{video.memo}</p>
             </div>
             <Comment videoId={video.id} />
           </div>
           {user_id && (
-            <div className="absolute top-4 right-6">
+            <div className="absolute top-3 right-4 md:top-4 md:right-6">
               <DeleteVideoButton videoId={video.id} userId={user_id} />
             </div>
           )}
           {user_id && (
-            <div className="absolute top-3 right-14">
+            <div className="absolute top-2 md:top-3 right-12 md:right-14">
               <FaEdit
                 className="ml-2 mb-2 text-gray-400 text-3xl cursor-pointer"
                 onClick={() => handleEdit(index, video.title, video.memo)}

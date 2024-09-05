@@ -17,12 +17,12 @@ const FormButton: React.FC = () => {
   };
 
   return (
-    <div className="fixed bottom-36 right-12">
+    <div className="fixed bottom-20 md:bottom-36 right-24 md:right-12">
       <button
         onClick={redirectToForm}
-        className="bg-gray-500 hover:bg-gray-700 text-white font-bold p-6 rounded-full shadow-lg"
+        className="bg-gray-500 hover:bg-gray-700 text-white font-bold p-4 md:p-6 rounded-full shadow-lg text-3xl md:text-4xl"
       >
-        <FaPlus size={32} />
+        <FaPlus />
       </button>
     </div>
   );
