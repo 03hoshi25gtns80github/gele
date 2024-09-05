@@ -7,15 +7,15 @@ export default function Home() {
   return (
     <>
       <Header id={null} />
-      <div className="w-2/3 bg-gradient-to-r from-blue-200 to-purple-300 min-h-screen flex flex-col items-center">
+      <div className="w-4/5 md:w-2/3 pb-20 bg-gradient-to-r from-blue-200 to-purple-300 min-h-screen flex flex-col items-center">
         <motion.div
           className="text-center mt-10"
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
         >
-          <h1 className="text-gray-800 text-6xl font-bold">gele-ch</h1>
-          <p className="text-gray-800 text-3xl mt-4">
+          <h1 className="text-gray-800 text-5xl md:text-6xl font-bold">gele-ch</h1>
+          <p className="text-gray-800 text-2xl md:text-3xl mt-4">
             毎日の滑りをカレンダーに記録
           </p>
           <Link href="/login" legacyBehavior>
@@ -36,10 +36,10 @@ export default function Home() {
               className="w-80 h-70 mx-auto rounded-full shadow-lg md:order-2"
             />
             <div className="md:mr-8 mt-8 md:mt-0">
-              <h2 className="text-gray-800 text-4xl font-bold">
+              <h2 className="text-gray-800 text-3xl md:text-4xl font-bold">
                 My Calendar
               </h2>
-              <p className="text-gray-800 text-2xl">カレンダーでいつでも振り返り</p>
+              <p className="text-gray-800 text-xl md:text-3xl">カレンダーでいつでも振り返り</p>
             </div>
           </motion.div>
           <motion.div
@@ -53,10 +53,10 @@ export default function Home() {
               className="w-80 h-70 mx-auto rounded-full shadow-lg"
             />
             <div className="md:ml-8 mt-8 md:mt-0">
-              <h2 className="text-gray-800 text-4xl font-bold">
+              <h2 className="text-gray-800 text-2xl md:text-4xl font-bold">
                 video&memo&comment
               </h2>
-              <p className="text-gray-800 text-2xl">動画とメモとコメントを記録</p>
+              <p className="text-gray-800 text-xl md:text-3xl">動画とメモとコメントを記録</p>
             </div>
           </motion.div>
           <motion.div
@@ -70,10 +70,10 @@ export default function Home() {
               className="w-80 h-70 mx-auto rounded-full shadow-lg md:order-2"
             />
             <div className="md:mr-8 mt-8 md:mt-0">
-              <h2 className="text-gray-800 text-4xl font-bold">
+              <h2 className="text-gray-800 text-2xl md:text-4xl font-bold">
                 Friend System
               </h2>
-              <p className="text-gray-800 text-2xl">
+              <p className="text-gray-800 text-xl md:text-3xl">
                 フレンドの動画にコメント
               </p>
             </div>
