@@ -14,7 +14,7 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
         >
-          <h1 className="text-gray-800 mt-24 text-5xl md:text-6xl font-bold">gele-ch</h1>
+          <h1 className="text-gray-800 mt-24 text-5xl md:text-6xl font-bold">gele-plus</h1>
           <p className="text-gray-800 text-xl md:text-3xl mt-6">
             毎日の滑りをカレンダーに記録
           </p>

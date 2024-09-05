@@ -10,13 +10,13 @@ interface HeaderProps {
   id: string | null;
 }
 
-const WELCOME_MESSAGE = "ようこそ！ gle-chへ！";
+const WELCOME_MESSAGE = "ようこそ！ gele-plus へ！";
 
 const Header: React.FC<HeaderProps> = ({ id }) => {
   const supabase = createClient();
   const [username, setUsername] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false); // ログイン状態を管理
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const router = useRouter();
 
   const handleViewCalendar = async (id: string) => {
@@ -87,7 +87,7 @@ const Header: React.FC<HeaderProps> = ({ id }) => {
   useEffect(() => {
     const checkUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      setIsLoggedIn(!!user); // ユーザーが存在するかどうかでログイン状態を設定
+      setIsLoggedIn(!!user);
     };
 
     checkUser();
