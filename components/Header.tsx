@@ -131,7 +131,7 @@ const Header: React.FC<HeaderProps> = ({ id }) => {
                     href="/account"
                     className="font-bold text-blue-900 hover:text-blue-600 transition duration-300"
                   >
-                    プロフィール更新
+                    プロフィール編集
                   </Link>
                 </li>
                 <li>

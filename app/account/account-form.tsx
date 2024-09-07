@@ -9,6 +9,7 @@ export default function AccountForm({ user }: { user: User | null }) {
   const supabase = createClient();
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState<string | null>(null);
+  const [code_name, setCodeName] = useState<string | null>(null);
   const [avatar_url, setAvatarUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -18,7 +19,7 @@ export default function AccountForm({ user }: { user: User | null }) {
 
       const { data, error, status } = await supabase
         .from("profiles")
-        .select(`username, avatar_url`)
+        .select(`username, code_name, avatar_url`)
         .eq("id", user?.id)
         .single();
 
@@ -29,6 +30,7 @@ export default function AccountForm({ user }: { user: User | null }) {
 
       if (data) {
         setUsername(data.username);
+        setCodeName(data.code_name);
         setAvatarUrl(data.avatar_url);
       }
     } catch (error) {
@@ -44,9 +46,11 @@ export default function AccountForm({ user }: { user: User | null }) {
 
   async function updateProfile({
     username,
+    code_name,
     avatar_url,
   }: {
     username: string | null;
+    code_name: string | null;
     avatar_url: string | null;
   }) {
     try {
@@ -55,6 +59,7 @@ export default function AccountForm({ user }: { user: User | null }) {
       const { error } = await supabase.from("profiles").upsert({
         id: user?.id as string,
         username,
+        code_name,
         avatar_url,
         updated_at: new Date().toISOString(),
       });
@@ -78,14 +83,19 @@ export default function AccountForm({ user }: { user: User | null }) {
             size={100}
             onUpload={(url) => {
               setAvatarUrl(url);
-              updateProfile({ username, avatar_url: url });
+              updateProfile({ username, code_name, avatar_url: url });
             }}
           />
         </div>
         <div className="flex-grow">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700">ユーザー名(半角英字)</label>
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium text-gray-700"
+              >
+                ユーザー名(半角英字)
+              </label>
               <input
                 id="username"
                 type="text"
@@ -95,12 +105,32 @@ export default function AccountForm({ user }: { user: User | null }) {
               />
             </div>
           </div>
+          <div className="grid grid-cols-2 gap-4 mt-1">
+            <div>
+              <label
+                htmlFor="code_name"
+                className="block text-sm font-medium text-gray-700"
+              >
+                コードネーム(半角英字)
+              </label>
+              <p className="text-sm text-gray-500">
+                チームでの呼ばれ方をローマ字で入力してください。映像の仕分けに利用されます。
+              </p>
+              <input
+                id="code_name"
+                type="text"
+                value={code_name || ""}
+                onChange={(e) => setCodeName(e.target.value)}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400 text-sm"
+              />
+            </div>
+          </div>
         </div>
       </div>
       <div className="mt-6">
         <button
           className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          onClick={() => updateProfile({ username, avatar_url })}
+          onClick={() => updateProfile({ username, code_name, avatar_url })}
           disabled={loading}
         >
           {loading ? (
