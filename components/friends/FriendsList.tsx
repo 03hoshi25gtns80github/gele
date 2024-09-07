@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
 import FriendListSection from "./FriendListSection";
+import TeamListSection from "../team/TeamListSection";
 
 interface FriendData {
   id: string;
@@ -13,14 +14,31 @@ interface FriendData {
   user_id: string;
 }
 
+interface TeamMember {
+  id: string;
+  username: string;
+  avatar_url: string | null;
+  user_id: string;
+}
+
+interface Team {
+  id: string;
+  name: string;
+  members: TeamMember[];
+}
+
 const FriendsList = ({ user }: { user: User | null }) => {
   const [friendsList, setFriendsList] = useState<FriendData[]>([]);
-  const [activeTab, setActiveTab] = useState<"friends" | "requests">("friends");
+  const [teamsList, setTeamsList] = useState<Team[]>([]);
+  const [activeTab, setActiveTab] = useState<"friends" | "requests" | "teams">(
+    "friends"
+  );
   const supabase = createClient();
 
   useEffect(() => {
     if (user) {
       fetchAndSetFriends(user.id);
+      fetchAndSetTeams(user.id);
     }
   }, [user]);
 
@@ -90,16 +108,121 @@ const FriendsList = ({ user }: { user: User | null }) => {
               : friend.requester.username,
           avatar_url,
           status: friend.status,
-          type: friend.requester_id === userId ? "sent" : "received", // 型を明示的に指定
+          type:
+            friend.requester_id === userId
+              ? ("sent" as "sent")
+              : ("received" as "received"), // 型を明示的に指定
           user_id:
             friend.requester_id === userId
               ? friend.recipient_id
               : friend.requester_id,
-        } as FriendData; // 型アサーションを追加
+        };
       })
     );
 
     return formattedData;
+  };
+
+  const fetchAndSetTeams = async (userId: string) => {
+    const teamsData = await getTeamsData(userId);
+    if (!teamsData) return;
+
+    const formattedTeams = await formatTeamsData(teamsData);
+    setTeamsList(formattedTeams);
+  };
+
+  const getTeamsData = async (userId: string) => {
+    const { data, error } = await supabase
+      .from("team_members")
+      .select(
+        `
+        team_id,
+        teams(name)
+      `
+      )
+      .eq("user_id", userId)
+      .eq("status", "accepted");
+
+    if (error) {
+      console.error("チームデータの取得エラー:", error);
+      return null;
+    }
+
+    console.log("取得したチームデータ:", data); // デバッグ用
+
+    return data;
+  };
+
+  const formatTeamsData = async (data: any[]): Promise<Team[]> => {
+    const teamsMap: { [key: string]: Team } = {};
+
+    for (const item of data) {
+      const teamId = item.team_id;
+      const teamName = item.teams.name;
+
+      if (!teamsMap[teamId]) {
+        teamsMap[teamId] = {
+          id: teamId,
+          name: teamName,
+          members: [],
+        };
+      }
+
+      // チームメンバーを取得
+      const { data: membersData, error: membersError } = await supabase
+        .from("team_members")
+        .select(
+          `
+          user_id,
+          profiles(username, avatar_url)
+        `
+        )
+        .eq("team_id", teamId)
+        .eq("status", "accepted");
+
+      if (membersError) {
+        console.error("チームメンバーの取得エラー:", membersError);
+        continue;
+      }
+
+      console.log(`取得したチームメンバー (${teamName}):`, membersData); // デバッグ用
+
+      for (const memberItem of membersData) {
+        const profiles = Array.isArray(memberItem.profiles) ? memberItem.profiles : [memberItem.profiles];
+
+        for (const profile of profiles) {
+          const member: TeamMember = {
+            id: memberItem.user_id,
+            username: profile.username,
+            avatar_url: profile.avatar_url,
+            user_id: memberItem.user_id,
+          };
+
+          if (profile.avatar_url) {
+            try {
+              const { data: downloadData, error: downloadError } =
+                await supabase.storage
+                  .from("avatars")
+                  .download(profile.avatar_url);
+
+              if (downloadError) {
+                throw downloadError;
+              }
+
+              member.avatar_url = URL.createObjectURL(downloadData);
+            } catch (error) {
+              console.error("Error downloading image: ", error);
+            }
+          }
+
+          teamsMap[teamId].members.push(member);
+        }
+      }
+    }
+
+    console.log("フォーマットされたチームデータ:", teamsMap); // デバッグ用
+
+    return Object.values(teamsMap);
   };
 
   const filterFriendsByCategory = (
@@ -138,7 +261,7 @@ const FriendsList = ({ user }: { user: User | null }) => {
           フレンド
         </button>
         <button
-          className={`pb-2 ${
+          className={`mr-4 pb-2 ${
             activeTab === "requests"
               ? "font-bold border-b-2 border-green-500"
               : ""
@@ -146,6 +269,14 @@ const FriendsList = ({ user }: { user: User | null }) => {
           onClick={() => setActiveTab("requests")}
         >
           リクエスト
+        </button>
+        <button
+          className={`pb-2 ${
+            activeTab === "teams" ? "font-bold border-b-2 border-green-500" : ""
+          }`}
+          onClick={() => setActiveTab("teams")}
+        >
+          チーム
         </button>
       </nav>
       {activeTab === "friends" && (
@@ -171,6 +302,13 @@ const FriendsList = ({ user }: { user: User | null }) => {
             user_id={user.id}
           />
         </>
+      )}
+      {activeTab === "teams" && (
+        <TeamListSection
+          title="所属チーム"
+          teams={teamsList}
+          user_id={user.id}
+        />
       )}
     </div>
   );

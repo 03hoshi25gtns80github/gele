@@ -45,7 +45,7 @@ const FriendsButton: React.FC<FriendsButtonProps> = ({ user }) => {
         ref={buttonRef}
         onMouseEnter={handleMouseEnter}
         className={`fixed bottom-20 right-4 md:bottom-12 md:right-12 text-white p-4 md:p-6 rounded-full cursor-pointer z-50 text-3xl md:text-4xl ${
-          isExpanded ? 'bg-green-400' : 'bg-green-500'
+          isExpanded ? "bg-green-400" : "bg-green-500"
         }`}
       >
         <FaUserFriends />
