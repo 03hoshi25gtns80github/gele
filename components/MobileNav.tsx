@@ -10,16 +10,19 @@ const MobileNav: React.FC = () => {
           <Link href="/my-calendar" className="flex flex-col items-center font-bold text-blue-900 hover:text-blue-600 transition duration-300">
             <FaCalendarAlt size={24} />
           </Link>
+          <span>マイカレンダー</span>
         </li>
         <li>
           <Link href="/account" className="flex flex-col items-center font-bold text-blue-900 hover:text-blue-600 transition duration-300">
             <FaUserAlt size={24} />
           </Link>
+          <span>プロフィール編集</span>
         </li>
         <li>
           <Link href="/settings" className="flex flex-col items-center font-bold text-blue-900 hover:text-blue-600 transition duration-300">
             <FaCog size={24} />
           </Link>
+          <span>設定</span>
         </li>
         <li>
           <form action="/auth/signout" method="post" className="inline">
@@ -28,6 +31,7 @@ const MobileNav: React.FC = () => {
             </button>
           </form>
         </li>
+        <span>ログアウト</span>
       </ul>
     </nav>
   );
