@@ -135,14 +135,6 @@ const Header: React.FC<HeaderProps> = ({ id }) => {
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    href="/settings"
-                    className="font-bold text-blue-900 hover:text-blue-600 transition duration-300"
-                  >
-                    設定
-                  </Link>
-                </li>
-                <li>
                   <form action="/auth/signout" method="post" className="inline">
                     <button
                       className="font-bold text-blue-900 hover:text-blue-600 transition duration-300"
