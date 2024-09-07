@@ -6,8 +6,10 @@ import { createClient } from "@/utils/supabase/client";
 interface FriendData {
   id: string;
   username: string;
+  avatar_url: string | null; // 変更
   status: "pending" | "accepted";
   type: "sent" | "received";
+  user_id: string;
 }
 
 interface FriendListSectionProps {
@@ -41,22 +43,7 @@ const FriendListSection: React.FC<FriendListSectionProps> = ({
     }
   };
 
-  const handleViewCalendar = async (friendId: string) => {
-    if (!user_id) return;
-
-    const { data, error } = await supabase
-      .from("friends")
-      .select("requester_id, recipient_id")
-      .eq("id", friendId)
-      .single();
-
-    if (error) {
-      console.error("フレンド情報取得エラー:", error);
-      return;
-    }
-
-    const friendUserId =
-      data.requester_id === user_id ? data.recipient_id : data.requester_id;
+  const handleViewCalendar = async (friendUserId: string) => {
     router.push(`/friend-calendar?friend=${friendUserId}`);
   };
 
@@ -65,11 +52,21 @@ const FriendListSection: React.FC<FriendListSectionProps> = ({
       {title && <h3 className="font-semibold mt-4">{title}</h3>}
       <ul>
         {friends.map((friend) => (
-          <li key={friend.id} className="mb-2 flex items-center justify-between">
-            <span>{friend.username}</span>
+          <li
+            key={friend.id}
+            className="mb-2 flex items-center justify-between"
+          >
+            <div className="flex items-center">
+              <img
+                src={friend.avatar_url || "/default-avatar.png"}
+                alt={`${friend.username}のアバター`}
+                className="w-8 h-8 rounded-full mr-2"
+              />
+              <span>{friend.username}</span>
+            </div>
             {friend.status === "accepted" && (
               <button
-                onClick={() => handleViewCalendar(friend.id)}
+                onClick={() => handleViewCalendar(friend.user_id)}
                 className="bg-green-500 text-white px-2 py-1 rounded text-sm"
               >
                 カレンダー表示

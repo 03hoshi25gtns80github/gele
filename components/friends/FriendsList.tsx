@@ -7,8 +7,10 @@ import FriendListSection from "./FriendListSection";
 interface FriendData {
   id: string;
   username: string;
+  avatar_url: string | null;
   status: "pending" | "accepted";
   type: "sent" | "received";
+  user_id: string;
 }
 
 const FriendsList = ({ user }: { user: User | null }) => {
@@ -26,7 +28,7 @@ const FriendsList = ({ user }: { user: User | null }) => {
     const friendsData = await getFriendsData(userId);
     if (!friendsData) return;
 
-    const formattedFriends = formatFriendsData(friendsData, userId);
+    const formattedFriends = await formatFriendsData(friendsData, userId);
     setFriendsList(formattedFriends);
   };
 
@@ -39,8 +41,8 @@ const FriendsList = ({ user }: { user: User | null }) => {
         status,
         requester_id,
         recipient_id,
-        requester:profiles!requester_id(username),
-        recipient:profiles!recipient_id(username)
+        requester:profiles!requester_id(username, avatar_url),
+        recipient:profiles!recipient_id(username, avatar_url)
       `
       )
       .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`);
@@ -53,16 +55,51 @@ const FriendsList = ({ user }: { user: User | null }) => {
     return data;
   };
 
-  const formatFriendsData = (data: any[], userId: string): FriendData[] => {
-    return data.map((friend) => ({
-      id: friend.id,
-      username:
-        friend.requester_id === userId
-          ? friend.recipient.username
-          : friend.requester.username,
-      status: friend.status,
-      type: friend.requester_id === userId ? "sent" : "received",
-    }));
+  const formatFriendsData = async (
+    data: any[],
+    userId: string
+  ): Promise<FriendData[]> => {
+    const formattedData = await Promise.all(
+      data.map(async (friend) => {
+        const avatarPath =
+          friend.requester_id === userId
+            ? friend.recipient.avatar_url
+            : friend.requester.avatar_url;
+
+        let avatar_url = null;
+        if (avatarPath) {
+          try {
+            const { data: downloadData, error: downloadError } =
+              await supabase.storage.from("avatars").download(avatarPath);
+
+            if (downloadError) {
+              throw downloadError;
+            }
+
+            avatar_url = URL.createObjectURL(downloadData);
+          } catch (error) {
+            console.error("Error downloading image: ", error);
+          }
+        }
+
+        return {
+          id: friend.id,
+          username:
+            friend.requester_id === userId
+              ? friend.recipient.username
+              : friend.requester.username,
+          avatar_url,
+          status: friend.status,
+          type: friend.requester_id === userId ? "sent" : "received", // 型を明示的に指定
+          user_id:
+            friend.requester_id === userId
+              ? friend.recipient_id
+              : friend.requester_id,
+        } as FriendData; // 型アサーションを追加
+      })
+    );
+
+    return formattedData;
   };
 
   const filterFriendsByCategory = (

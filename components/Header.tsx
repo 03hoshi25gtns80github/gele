@@ -99,7 +99,7 @@ const Header: React.FC<HeaderProps> = ({ id }) => {
         <div className="flex justify-between items-center">
           <div className="flex items-center bg-white rounded-full ml-0 md:ml-4 shadow-md">
             {avatarUrl && (
-              <div className="ml-2 border-4 border-gray-400 p-1 rounded-full">
+              <div className="ml-2 border-2 border-gray-400 p-1 rounded-full">
                 <Image
                   src={avatarUrl}
                   alt="User Avatar"
