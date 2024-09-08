@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Link from "next/link";
@@ -9,17 +9,24 @@ import { createClient } from "@/utils/supabase/client";
 export default function Home() {
   const router = useRouter();
   const supabase = createClient();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const checkUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         router.push("/my-calendar");
+      } else {
+        setIsLoading(false);
       }
     };
 
     checkUser();
   }, [router, supabase.auth]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
