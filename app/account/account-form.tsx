@@ -23,9 +23,19 @@ export default function AccountForm({ user }: { user: User | null }) {
         .eq("id", user?.id)
         .single();
 
-      if (error && status !== 406) {
-        console.log(error);
-        throw error;
+      if (error) {
+        if (status === 406) {
+          // データが見つからない場合は、新しいプロフィールを作成
+          const { error: insertError } = await supabase.from("profiles").insert({
+            id: user?.id,
+            username: null,
+            code_name: null,
+            avatar_url: null,
+          });
+          if (insertError) throw insertError;
+        } else {
+          throw error;
+        }
       }
 
       if (data) {
@@ -34,7 +44,7 @@ export default function AccountForm({ user }: { user: User | null }) {
         setAvatarUrl(data.avatar_url);
       }
     } catch (error) {
-      alert("Error loading user data!");
+      console.error("プロフィールの読み込み中にエラーが発生しました:", error);
     } finally {
       setLoading(false);
     }

@@ -1,9 +1,26 @@
 "use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { createClient } from "@/utils/supabase/client";
 
 export default function Home() {
+  const router = useRouter();
+  const supabase = createClient();
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        router.push("/my-calendar");
+      }
+    };
+
+    checkUser();
+  }, [router, supabase.auth]);
+
   return (
     <>
       <Header id={null} />
