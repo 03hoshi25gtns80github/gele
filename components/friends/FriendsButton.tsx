@@ -53,7 +53,7 @@ const FriendsButton: React.FC<FriendsButtonProps> = ({ user }) => {
       {isExpanded && (
         <aside
           ref={listRef}
-          className="fixed top-16 md:top-24 bottom-0 right-0 bg-green-100 transition-all duration-300 w-4/5 md:w-1/3 h-3/4 md:h-screen z-50"
+          className="fixed top-16 md:top-24 bottom-0 right-0 bg-green-100 transition-all duration-300 w-4/5 md:w-3/5 lg:w-1/3 h-3/4 md:h-screen z-50"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >

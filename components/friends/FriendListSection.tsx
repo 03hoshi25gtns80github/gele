@@ -56,26 +56,32 @@ const FriendListSection: React.FC<FriendListSectionProps> = ({
             key={friend.id}
             className="mb-2 flex items-center justify-between"
           >
-            <div className="flex items-center">
-              <img
-                src={friend.avatar_url || "/default-avatar.png"}
-                alt={`${friend.username}のアバター`}
-                className="w-8 h-8 rounded-full mr-2"
-              />
-              <span>{friend.username}</span>
-            </div>
-            {friend.status === "accepted" && (
+            {friend.status === "accepted" ? (
               <button
                 onClick={() => handleViewCalendar(friend.user_id)}
-                className="bg-green-500 text-white px-2 py-1 rounded text-sm"
+                className="flex items-center w-full p-2 rounded hover:bg-gray-100 active:bg-gray-200 transition-colors duration-200"
               >
-                カレンダー表示
+                <img
+                  src={friend.avatar_url || "/default-avatar.png"}
+                  alt={`${friend.username}のアバター`}
+                  className="w-8 h-8 rounded-full mr-2"
+                />
+                <span>{friend.username}</span>
               </button>
+            ) : (
+              <div className="flex items-center">
+                <img
+                  src={friend.avatar_url || "/default-avatar.png"}
+                  alt={`${friend.username}のアバター`}
+                  className="w-8 h-8 rounded-full mr-2"
+                />
+                <span>{friend.username}</span>
+              </div>
             )}
             {friend.type === "received" && friend.status === "pending" && (
               <button
                 onClick={() => handleAccept(friend.id)}
-                className="bg-blue-500 text-white px-2 py-1 rounded text-sm"
+                className="bg-blue-500 text-white px-2 py-1 rounded text-sm hover:bg-blue-600 active:bg-blue-700 transition-colors duration-200"
               >
                 承認
               </button>

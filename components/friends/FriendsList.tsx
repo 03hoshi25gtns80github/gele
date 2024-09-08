@@ -305,7 +305,6 @@ const FriendsList = ({ user }: { user: User | null }) => {
       )}
       {activeTab === "teams" && (
         <TeamListSection
-          title="所属チーム"
           teams={teamsList}
           user_id={user.id}
         />

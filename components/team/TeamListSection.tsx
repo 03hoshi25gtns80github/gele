@@ -17,13 +17,11 @@ interface Team {
 }
 
 interface TeamListSectionProps {
-  title: string;
   teams: Team[];
   user_id: string;
 }
 
 const TeamListSection: React.FC<TeamListSectionProps> = ({
-  title,
   teams,
   user_id,
 }) => {
@@ -38,32 +36,28 @@ const TeamListSection: React.FC<TeamListSectionProps> = ({
 
   return (
     <>
-      {title && <h3 className="font-semibold mt-4">{title}</h3>}
       <ul>
         {teams.map((team) => (
           <li key={team.id} className="mb-4">
             <h4 className="font-semibold">{team.name}</h4>
             <ul>
               {team.members
-                .filter((member) => member.user_id !== user_id) // 自分以外のメンバーをフィルタリング
+                .filter((member) => member.user_id !== user_id)
                 .map((member) => (
                   <li
                     key={member.id}
-                    className="mb-2 flex items-center justify-between"
+                    className="mb-2"
                   >
-                    <div className="flex items-center">
+                    <button
+                      onClick={() => handleViewCalendar(member.user_id)}
+                      className="flex items-center w-full p-2 rounded hover:bg-gray-100 active:bg-gray-200 transition-colors duration-200"
+                    >
                       <img
                         src={member.avatar_url || "/default-avatar.png"}
                         alt={`${member.username}のアバター`}
                         className="w-8 h-8 rounded-full mr-2"
                       />
                       <span>{member.username}</span>
-                    </div>
-                    <button
-                      onClick={() => handleViewCalendar(member.user_id)}
-                      className="bg-green-500 text-white px-2 py-1 rounded text-sm"
-                    >
-                      カレンダー表示
                     </button>
                   </li>
                 ))}
