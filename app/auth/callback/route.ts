@@ -4,46 +4,35 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 
 export async function GET(request: Request) {
-  console.log("Debug: GET function started");
-  const { searchParams } = new URL(request.url);
+  const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
+  // "next"パラメータがある場合はそれをリダイレクト先として使用し、
+  // ない場合はデフォルトで"/"にリダイレクト
   const next = searchParams.get("next") ?? "/";
 
-  console.log("Debug: request.url", request.url);
-  console.log("Debug: code", code ? "exists" : "not found");
-  console.log("Debug: next", next);
-  console.log("Debug: NODE_ENV", process.env.NODE_ENV);
-  console.log("Debug: NEXT_PUBLIC_SITE_URL", process.env.NEXT_PUBLIC_SITE_URL);
-
-  if (!code) {
-    console.log("Debug: No code found, redirecting to error page");
-    return NextResponse.redirect("/auth/auth-code-error");
-  }
-
-  try {
-    console.log("Debug: Attempting to exchange code for session");
+  if (code) {
     const supabase = createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
-    
-    if (error) {
-      console.error("Debug: Error exchanging code for session", error);
-      return NextResponse.redirect("/auth/auth-code-error");
+    if (!error) {
+      // ロードバランサーを通過する前のオリジナルのホスト名を取得
+      const forwardedHost = request.headers.get("x-forwarded-host");
+      const isLocalEnv = process.env.NODE_ENV === "development";
+
+      if (isLocalEnv) {
+        // ローカル環境では、ロードバランサーがないため、
+        // X-Forwarded-Hostヘッダーを考慮する必要がない
+        return NextResponse.redirect(`${origin}${next}`);
+      } else if (forwardedHost) {
+        // 本番環境で、X-Forwarded-Hostヘッダーがある場合
+        return NextResponse.redirect(`https://${forwardedHost}${next}`);
+      } else {
+        // その他の場合（本番環境でX-Forwarded-Hostがない場合など）
+        return NextResponse.redirect(`${origin}${next}`);
+      }
     }
-
-    console.log("Debug: Successfully exchanged code for session");
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-    
-    if (!siteUrl) {
-      console.error("Debug: NEXT_PUBLIC_SITE_URL is not set");
-      return NextResponse.redirect("/auth/auth-code-error");
-    }
-
-    const redirectUrl = `https://${siteUrl}${next}`;
-    console.log("Debug: Final redirectUrl", redirectUrl);
-
-    return NextResponse.redirect(redirectUrl);
-  } catch (error) {
-    console.error("Debug: Unexpected error", error);
-    return NextResponse.redirect("/auth/auth-code-error");
   }
+
+  // 認証コードがない、またはエラーが発生した場合は
+  // エラーページにリダイレクト
+  return NextResponse.redirect(`${origin}/auth/auth-code-error`);
 }
