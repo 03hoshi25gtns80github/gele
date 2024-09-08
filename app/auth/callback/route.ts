@@ -6,9 +6,11 @@ import { createClient } from "@/utils/supabase/server";
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  // "next"パラメータがある場合はそれをリダイレクト先として使用し、
-  // ない場合はデフォルトで"/"にリダイレクト
   const next = searchParams.get("next") ?? "/";
+
+  console.log("Debug: request.url", request.url);
+  console.log("Debug: origin", origin);
+  console.log("Debug: next", next);
 
   if (code) {
     const supabase = createClient();
@@ -16,7 +18,13 @@ export async function GET(request: Request) {
     if (!error) {
       const forwardedHost = request.headers.get("x-forwarded-host");
       const forwardedProto = request.headers.get("x-forwarded-proto");
+      const host = request.headers.get("host");
       const isLocalEnv = process.env.NODE_ENV === "development";
+
+      console.log("Debug: forwardedHost", forwardedHost);
+      console.log("Debug: forwardedProto", forwardedProto);
+      console.log("Debug: host", host);
+      console.log("Debug: isLocalEnv", isLocalEnv);
 
       let redirectUrl;
       if (isLocalEnv) {
@@ -24,8 +32,10 @@ export async function GET(request: Request) {
       } else if (forwardedHost && forwardedProto) {
         redirectUrl = `${forwardedProto}://${forwardedHost}${next}`;
       } else {
-        redirectUrl = `https://${request.headers.get("host")}${next}`;
+        redirectUrl = `https://${host}${next}`;
       }
+
+      console.log("Debug: redirectUrl", redirectUrl);
 
       return NextResponse.redirect(redirectUrl);
     }

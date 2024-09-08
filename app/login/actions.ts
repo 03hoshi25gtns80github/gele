@@ -50,11 +50,14 @@ export async function googleLogin() {
 
   const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
   const host = process.env.NEXT_PUBLIC_SITE_URL || "gele-plus.vercel.app";
+  const redirectTo = `${protocol}://${host}/auth/callback`;
+
+  console.log("Debug: googleLogin redirectTo", redirectTo);
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${protocol}://${host}/auth/callback`,
+      redirectTo: redirectTo,
     },
   });
 
