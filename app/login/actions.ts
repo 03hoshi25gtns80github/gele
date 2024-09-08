@@ -48,10 +48,13 @@ export async function signup(formData: FormData) {
 export async function googleLogin() {
   const supabase = createClient();
 
+  const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+  const host = process.env.NEXT_PUBLIC_SITE_URL || "gele-plus.vercel.app";
+
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `https://gele-plus.vercel.app/auth/callback`,
+      redirectTo: `${protocol}://${host}/auth/callback`,
     },
   });
 

@@ -14,21 +14,20 @@ export async function GET(request: Request) {
     const supabase = createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      // ロードバランサーを通過する前のオリジナルのホスト名を取得
       const forwardedHost = request.headers.get("x-forwarded-host");
+      const forwardedProto = request.headers.get("x-forwarded-proto");
       const isLocalEnv = process.env.NODE_ENV === "development";
 
+      let redirectUrl;
       if (isLocalEnv) {
-        // ローカル環境では、ロードバランサーがないため、
-        // X-Forwarded-Hostヘッダーを考慮する必要がない
-        return NextResponse.redirect(`${origin}${next}`);
-      } else if (forwardedHost) {
-        // 本番環境で、X-Forwarded-Hostヘッダーがある場合
-        return NextResponse.redirect(`https://${forwardedHost}${next}`);
+        redirectUrl = `${origin}${next}`;
+      } else if (forwardedHost && forwardedProto) {
+        redirectUrl = `${forwardedProto}://${forwardedHost}${next}`;
       } else {
-        // その他の場合（本番環境でX-Forwarded-Hostがない場合など）
-        return NextResponse.redirect(`${origin}${next}`);
+        redirectUrl = `https://${request.headers.get("host")}${next}`;
       }
+
+      return NextResponse.redirect(redirectUrl);
     }
   }
 
