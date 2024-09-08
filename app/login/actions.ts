@@ -47,25 +47,21 @@ export async function signup(formData: FormData) {
 
 export async function googleLogin() {
   const supabase = createClient();
-
-  const host = process.env.NEXT_PUBLIC_SITE_URL || "gele-plus.vercel.app";
-  const redirectTo = `https://${host}/auth/callback`;
-
-  console.log("Debug: googleLogin redirectTo", redirectTo);
+  const callbackUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`;
+  
+  console.log("Debug: googleLogin callbackUrl", callbackUrl);
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: redirectTo,
+      redirectTo: callbackUrl,
     },
   });
 
   if (error) {
-    console.error('Googleログインエラー:', error);
-    redirect("/error");
+    console.error("Debug: Google login error", error);
+    return { error: error.message };
   }
 
-  if (data.url) {
-    redirect(data.url);
-  }
+  return { success: true };
 }
