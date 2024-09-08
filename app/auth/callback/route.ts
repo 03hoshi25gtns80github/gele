@@ -16,32 +16,16 @@ export async function GET(request: Request) {
     const supabase = createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      const forwardedHost = request.headers.get("x-forwarded-host");
-      const forwardedProto = request.headers.get("x-forwarded-proto");
-      const host = request.headers.get("host");
-      const isLocalEnv = process.env.NODE_ENV === "development";
+      const host = request.headers.get("host") || process.env.NEXT_PUBLIC_SITE_URL || "gele-plus.vercel.app";
+      const redirectUrl = `https://${host}${next}`;
 
-      console.log("Debug: forwardedHost", forwardedHost);
-      console.log("Debug: forwardedProto", forwardedProto);
-      console.log("Debug: host", host);
-      console.log("Debug: isLocalEnv", isLocalEnv);
-
-      let redirectUrl;
-      if (isLocalEnv) {
-        redirectUrl = `${origin}${next}`;
-      } else if (forwardedHost && forwardedProto) {
-        redirectUrl = `${forwardedProto}://${forwardedHost}${next}`;
-      } else {
-        redirectUrl = `https://${host}${next}`;
-      }
-
-      console.log("Debug: redirectUrl", redirectUrl);
+      console.log("Debug: Final redirectUrl", redirectUrl);
 
       return NextResponse.redirect(redirectUrl);
     }
   }
 
-  // 認証コードがない、またはエラーが発生した場合は
   // エラーページにリダイレクト
+  console.log("Debug: Redirecting to error page");
   return NextResponse.redirect(`${origin}/auth/auth-code-error`);
 }
