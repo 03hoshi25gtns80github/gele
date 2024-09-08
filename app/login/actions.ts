@@ -48,9 +48,8 @@ export async function signup(formData: FormData) {
 export async function googleLogin() {
   const supabase = createClient();
 
-  const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
   const host = process.env.NEXT_PUBLIC_SITE_URL || "gele-plus.vercel.app";
-  const redirectTo = `${protocol}://${host}/auth/callback`;
+  const redirectTo = `https://${host}/auth/callback`;
 
   console.log("Debug: googleLogin redirectTo", redirectTo);
 
