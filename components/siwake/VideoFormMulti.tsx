@@ -43,12 +43,12 @@ const VideoFormMulti: React.FC<VideoFormMultiProps> = ({
   };
 
   return (
-    <div className="mb-4">
+    <div className="mb-4 p-4 border-2 border-indigo-500 rounded-md">
       <label
         htmlFor="videoUpload"
         className="block text-sm font-medium text-gray-700 mb-1"
       >
-        動画アップロード
+        仕分けする動画をアップロード
       </label>
       <div
         {...getRootProps()}

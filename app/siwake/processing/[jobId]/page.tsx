@@ -26,7 +26,7 @@ const ProcessingPage = () => {
   }, [jobId, router]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex w-3/5 mx-auto items-center justify-center min-h-screen bg-gray-100">
       <div className="text-center">
         <h1 className="text-3xl font-bold mb-4">処理中...</h1>
         <p className="text-gray-600">しばらくお待ちください。</p>

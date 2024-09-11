@@ -20,6 +20,25 @@ const FileNameSchema = z.object({
   )
 });
 
+async function checkIfCancelled(jobId: string) {
+  const supabase = createClient();
+  const { data: jobStatus, error: statusError } = await supabase
+    .from('video_jobs')
+    .select('status')
+    .eq('id', jobId)
+    .single();
+
+  if (statusError) {
+    console.error('ジョブステータスの取得に失敗しました:', statusError);
+    throw statusError;
+  }
+
+  if (jobStatus.status === 'cancelled') {
+    console.log(`ジョブID: ${jobId} はキャンセルされました`);
+    throw new Error('ジョブがキャンセルされました');
+  }
+}
+
 export async function videoProcessor(jobId: string, userInput: string[]) {
   const supabase = createClient();
   console.log(`ジョブID: ${jobId} の処理を開始します`);
@@ -35,6 +54,21 @@ export async function videoProcessor(jobId: string, userInput: string[]) {
     console.error('ジョブの取得に失敗しました:', jobError);
     throw jobError;
   }
+
+  // 処理がキャンセルされているか確認
+  await checkIfCancelled(jobId);
+
+  // user_inputをvideo_jobsのtargetsに挿入
+  const { error: updateError } = await supabase
+    .from('video_jobs')
+    .update({ targets: userInput })
+    .eq('id', jobId);
+
+  if (updateError) {
+    console.error('ジョブの更新に失敗しました:', updateError);
+    throw updateError;
+  }
+
   console.log('ジョブの詳細を取得しました:', job);
 
   // Fetch video files
@@ -54,6 +88,9 @@ export async function videoProcessor(jobId: string, userInput: string[]) {
   for (const file of files) {
     console.log(`ファイルID: ${file.id} の処理を開始します`);
 
+    // 処理がキャンセルされているか確認
+    await checkIfCancelled(jobId);
+
     // Process each file
     const { original_path } = file;
 
@@ -71,13 +108,22 @@ export async function videoProcessor(jobId: string, userInput: string[]) {
     const tempInputPath = join(tmpdir(), `input-${file.id}.${original_path.split('.').pop()}`);
     await writeFile(tempInputPath, Buffer.from(buffer));
 
+    // 処理がキャンセルされているか確認
+    await checkIfCancelled(jobId);
+
     // Convert to MP4
     const processedPath = await convertToMp4(tempInputPath, file.id, jobId);
     console.log(`ファイルID: ${file.id} をMP4に変換しました: ${processedPath}`);
 
+    // 処理がキャンセルされているか確認
+    await checkIfCancelled(jobId);
+
     // Convert to MP3
     const mp3Path = await convertToMp3(tempInputPath, jobId);
     console.log(`ファイルID: ${file.id} をMP3に変換しました: ${mp3Path}`);
+
+    // 処理がキャンセルされているか確認
+    await checkIfCancelled(jobId);
 
     // Extract audio and transcribe
     const transcription = await transcribeAudio(mp3Path);
@@ -94,6 +140,9 @@ export async function videoProcessor(jobId: string, userInput: string[]) {
     // Clean up temporary files
     await unlink(tempInputPath);
   }
+
+  // 処理がキャンセルされているか確認
+  await checkIfCancelled(jobId);
 
   // Generate new file names after all transcriptions are done
   const newFileNames = await generateNewFileName(transcriptions, userInput);

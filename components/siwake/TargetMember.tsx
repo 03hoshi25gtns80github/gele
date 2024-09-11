@@ -1,12 +1,54 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { createClient } from "@/utils/supabase/client";
 
 interface TargetMemberProps {
   onUserInputChange: (inputs: string[]) => void;
+  userid: string;
+  onTeamSelect: (teamId: string | null) => void; // 追加
 }
 
-const TargetMember: React.FC<TargetMemberProps> = ({ onUserInputChange }) => {
+const TargetMember: React.FC<TargetMemberProps> = ({
+  onUserInputChange,
+  userid,
+  onTeamSelect, // 追加
+}) => {
   const [userInputs, setUserInputs] = useState<string[]>([""]);
+  const [teams, setTeams] = useState<any[]>([]);
+  const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
+
+  const supabase = createClient();
+
+  useEffect(() => {
+    const fetchTeams = async () => {
+      const { data, error } = await supabase
+        .from("team_members")
+        .select("team_id")
+        .eq("user_id", userid)
+        .eq("status", "accepted"); // ここでstatusがacceptedのものを取得
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      const teamIds = data.map((record: any) => record.team_id);
+
+      const { data: teamsData, error: teamsError } = await supabase
+        .from("teams")
+        .select("id, name")
+        .in("id", teamIds);
+
+      if (teamsError) {
+        console.error(teamsError);
+        return;
+      }
+
+      setTeams(teamsData);
+    };
+
+    fetchTeams();
+  }, [userid]);
 
   const handleInputChange = (index: number, value: string) => {
     const newInputs = [...userInputs];
@@ -21,40 +63,90 @@ const TargetMember: React.FC<TargetMemberProps> = ({ onUserInputChange }) => {
 
   const removeInputField = (index: number) => {
     const newInputs = userInputs.filter((_, i) => i !== index);
-    setUserInputs(newInputs);
+    setUserInputs(newInputs.length > 0 ? newInputs : [""]);
     onUserInputChange(newInputs);
   };
 
+  const handleTeamClick = async (teamId: string) => {
+    setSelectedTeam(teamId);
+    onTeamSelect(teamId); // 追加
+
+    const { data, error } = await supabase
+      .from("team_members")
+      .select("user_id")
+      .eq("team_id", teamId)
+      .eq("status", "accepted"); // ここでstatusがacceptedのものを取得
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    const userIds = data.map((record: any) => record.user_id);
+
+    const { data: profilesData, error: profilesError } = await supabase
+      .from("profiles")
+      .select("full_name")
+      .in("id", userIds);
+
+    if (profilesError) {
+      console.error(profilesError);
+      return;
+    }
+
+    const userNames = profilesData.map((profile: any) => profile.full_name);
+    setUserInputs(userNames.length > 0 ? userNames : [""]);
+    onUserInputChange(userNames);
+  };
+
   return (
-    <div className="mb-4">
-      <label htmlFor="targetMember" className="block text-sm font-medium text-gray-700 mb-1">
-        ターゲットメンバー
-      </label>
-      {userInputs.map((input, index) => (
-        <div key={index} className="flex items-center mb-2">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => handleInputChange(index, e.target.value)}
-            placeholder="ユーザー入力をここに入力してください"
-            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition duration-150 ease-in-out"
-          />
-          {index > 0 && (
-            <button
-              onClick={() => removeInputField(index)}
-              className="ml-2 bg-red-500 text-white p-2 rounded-md hover:bg-red-600 transition duration-150 ease-in-out"
-            >
-              -
-            </button>
-          )}
+    <div className="mb-4 p-4 border-2 border-indigo-500 rounded-md">
+      <div className="mb-2 p-4 bg-white rounded-md">
+        <h2 className="text-lg font-semibold mb-2">チームリスト</h2>
+        {teams.map((team) => (
+          <button
+            key={team.id}
+            onClick={() => handleTeamClick(team.id)}
+            className={`block w-full text-left p-2 border border-gray-300 rounded-md mb-2 hover:bg-gray-100 ${
+              selectedTeam === team.id ? "bg-blue-200" : ""
+            }`} // 追加
+          >
+            {team.name}
+          </button>
+        ))}
+      </div>
+      <div className="mb-4 px-4 bg-white rounded-md">
+        <div className="flex items-center mb-2">
+          <h2 className="text-lg font-semibold">メンバーリスト</h2>
+          <button
+          onClick={addInputField}
+            className="ml-4 border-2 border-blue-500 text-xl text-blue-500 px-3 rounded-full hover:bg-blue-200 hover:text-white transition duration-150 ease-in-out"
+          >
+            +
+          </button>
         </div>
-      ))}
-      <button
-        onClick={addInputField}
-        className="mt-2 bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition duration-150 ease-in-out"
-      >
-        +
-      </button>
+        {userInputs.length === 0 ? (
+          <p className="text-gray-500">仕分け対象の名前を入力してください</p>
+        ) : (
+          userInputs.map((input, index) => (
+            <div key={index} className="flex items-center mb-2">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => handleInputChange(index, e.target.value)}
+                placeholder="仕分け対象の名前を入力してください"
+                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition duration-150 ease-in-out"
+              />
+              <button
+                onClick={() => removeInputField(index)}
+                className="ml-2 bg-red-500 text-4xl text-white px-2 rounded-md hover:bg-red-600 transition duration-150 ease-in-out"
+              >
+                -
+              </button>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 };

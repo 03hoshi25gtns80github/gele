@@ -70,3 +70,32 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "処理状態の取得に失敗しました", details: (error as Error).message }, { status: 500 });
   }
 };
+
+export async function POST_CANCEL(req: NextRequest) {
+  console.log("キャンセルリクエストを受信しました");
+
+  try {
+    const body = await req.json();
+    const { jobId } = body;
+
+    if (!jobId) {
+      return NextResponse.json({ error: "jobIdが必要です" }, { status: 400 });
+    }
+
+    // ジョブのステータスをキャンセルに更新
+    const supabase = createClient();
+    const { error } = await supabase
+      .from('video_jobs')
+      .update({ status: 'cancelled' })
+      .eq('id', jobId);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return NextResponse.json({ message: "ジョブがキャンセルされました" }, { status: 200 });
+  } catch (error) {
+    console.error("キャンセルリクエストでエラーが発生しました:", error);
+    return NextResponse.json({ error: "キャンセルに失敗しました", details: (error as Error).message }, { status: 500 });
+  }
+}

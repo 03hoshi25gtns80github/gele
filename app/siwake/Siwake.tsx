@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
-import { motion } from "framer-motion";
 import { type User } from "@supabase/supabase-js";
 import VideoFormMulti from "@/components/siwake/VideoFormMulti";
 import TargetMember from "@/components/siwake/TargetMember";
@@ -16,6 +15,8 @@ const Siwake: React.FC<SiwakeProps> = ({ user }) => {
   const [userInputs, setUserInputs] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedTeam, setSelectedTeam] = useState<string | null>(null); // 追加
+  const [currentJobId, setCurrentJobId] = useState<string | null>(null); // 追加
   const supabase = createClient();
   const router = useRouter();
 
@@ -27,13 +28,17 @@ const Siwake: React.FC<SiwakeProps> = ({ user }) => {
     setUserInputs(inputs);
   };
 
+  const handleTeamSelect = (teamId: string | null) => {
+    setSelectedTeam(teamId); // 追加
+  };
+
   const handleUpload = async () => {
     setIsLoading(true);
     setError(null);
 
     const { data, error } = await supabase
       .from("video_jobs")
-      .insert({ user_id: user.id, status: "pending" })
+      .insert({ user_id: user.id, status: "pending", team_id: selectedTeam })
       .select()
       .single();
 
@@ -45,6 +50,7 @@ const Siwake: React.FC<SiwakeProps> = ({ user }) => {
     }
 
     const jobId = data?.id;
+    setCurrentJobId(jobId); // 追加
 
     if (!jobId) {
       console.error("Job ID is undefined");
@@ -106,39 +112,70 @@ const Siwake: React.FC<SiwakeProps> = ({ user }) => {
     router.push(`/siwake/processing/${jobId}`);
   };
 
+  const handleCancel = async () => {
+    setIsLoading(false);
+    setError(null);
+
+    const response = await fetch("/api/siwake-api/cancel", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ jobId: currentJobId }), // currentJobIdは現在のジョブID
+    });
+
+    if (!response.ok) {
+      console.error("キャンセルに失敗しました");
+      setError("キャンセルに失敗しました");
+    } else {
+      console.log("キャンセルが成功しました");
+    }
+  };
+
   return (
-    <>
-      <div className="w-4/5 md:w-2/3 pb-20 bg-gradient-to-r from-blue-200 to-purple-300 min-h-screen flex flex-col items-center">
-        <motion.div
-          className="text-center mt-10"
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
-        >
-          <h1 className="text-gray-800 mt-24 text-5xl md:text-6xl font-bold">
-            動画処理システム
-          </h1>
-          <p className="text-gray-800 text-xl md:text-3xl mt-6">
-            複数の動画ファイルをアップロードして処理します
-          </p>
-        </motion.div>
-        <div className="flex flex-col items-center mt-10 space-y-6">
+    <div className="w-full mx-auto bg-white rounded-lg overflow-hidden relative">
+      {isLoading && (
+        <div className="fixed w-full min-h-screen inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+          <div className="bg-white bg-opacity-90 p-8 rounded-lg shadow-lg">
+            <div className="text-black text-2xl font-bold">
+              仕分け中です、このままお待ちください...
+            </div>
+            <button
+              onClick={handleCancel}
+              className="mt-4 bg-red-500 text-white font-bold py-2 px-4 rounded"
+            >
+              キャンセル
+            </button>
+          </div>
+        </div>
+      )}
+      <div className="px-6 py-4">
+        <h2 className="text-4xl font-bold text-center mb-6 animate-fade-in text-gray-700 text-shadow-md">
+          映像仕分けAI
+        </h2>
+        <div className="space-y-4">
+          <TargetMember
+            userid={user.id}
+            onUserInputChange={handleUserInputChange}
+            onTeamSelect={handleTeamSelect} // 追加
+          />
           <VideoFormMulti
             onVideoDataSelected={handleVideoDataSelected}
             uploading={isLoading}
             error={error}
           />
-          <TargetMember onUserInputChange={handleUserInputChange} />
-          <button
-            onClick={handleUpload}
-            disabled={isLoading}
-            className="mt-4 bg-indigo-400 text-gray-800 text-xl font-bold py-3 px-6 rounded-full hover:bg-indigo-500 transition duration-300"
-          >
-            {isLoading ? "アップロード中..." : "アップロード"}
-          </button>
         </div>
       </div>
-    </>
+      <div className="px-6 py-4">
+        <button
+          onClick={handleUpload}
+          className={`w-full text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out ${
+            isLoading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
+          }`}
+          disabled={isLoading}
+        >
+          {isLoading ? "仕分け中..." : "仕分け開始"}
+        </button>
+      </div>
+    </div>
   );
 };
 

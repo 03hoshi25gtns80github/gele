@@ -1,14 +1,26 @@
-"use client";
+"use server";
 import React from "react";
+import Header from "@/components/Header";
+import { createClient } from "@/utils/supabase/server";
+import VideoDownloader from "@/components/siwake/VideoDownloader";
 
-const ResultPage = () => {
+const ResultPage = async () => {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold mb-4">処理が完了しました！</h1>
-        <p className="text-gray-600">結果を確認してください。</p>
+    <>
+      <Header id={user?.id || ""} />
+      <div className="flex w-3/5 p-10 items-center justify-center bg-white mt-2 shadow-md rounded-lg overflow-hidden">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold mb-4">処理が完了しました！</h1>
+          <p className="text-gray-600">結果を確認してください。</p>
+        </div>
       </div>
-    </div>
+      <div className="w-3/5 p-8 mx-auto bg-white mt-2 mb-24 shadow-md rounded-lg overflow-hidden">
+        <VideoDownloader user_id={user?.id || ""} />
+      </div>
+    </>
   );
 };
 
