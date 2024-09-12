@@ -90,7 +90,7 @@ const VideoDownloader: React.FC<VideoDownloaderProps> = ({ user_id }) => {
 
   return (
     <div className="p-2">
-      <h2 className="text-3xl font-bold mb-4">Video Jobs</h2>
+      <h2 className="text-3xl font-bold mb-4">仕分けが完了した動画をダウンロード</h2>
       <ul className="space-y-4">
         {jobs.map((job) => (
           <li

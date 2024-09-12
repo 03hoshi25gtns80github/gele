@@ -71,7 +71,7 @@ export async function GET(req: NextRequest) {
   }
 };
 
-export async function POST_CANCEL(req: NextRequest) {
+export async function DELETE(req: NextRequest) {
   console.log("キャンセルリクエストを受信しました");
 
   try {
