@@ -207,39 +207,50 @@ const TeamForm: React.FC<{ user: User | null }> = ({ user }) => {
         )}
         {showRequests && (
           <ul className="mb-4">
-            {requests.map((request) => (
-              <li
-                key={request.id}
-                className="flex justify-between items-center mb-2 bg-gray-100 p-2 rounded"
-              >
-                <div className="flex items-center">
-                  <img
-                    src={request.user.avatar_url || "/default-avatar.png"}
-                    alt={`${request.user.username}のアバター`}
-                    className="w-8 h-8 rounded-full mr-2"
-                  />
-                  <span>
-                    {request.user.username} がチームに参加をリクエストしました。
-                  </span>
-                </div>
-                <div className="flex">
-                  <button
-                    onClick={() =>
-                      approveRequest(request.id, request.user_id, request.team_id)
-                    }
-                    className="bg-green-500 text-white px-2 py-1 rounded text-sm mr-2 hover:bg-green-700"
-                  >
-                    承認
-                  </button>
-                  <button
-                    onClick={() => rejectRequest(request.id)}
-                    className="bg-red-500 text-white px-2 py-1 rounded text-sm hover:bg-red-700"
-                  >
-                    拒否
-                  </button>
-                </div>
-              </li>
-            ))}
+            {requests.map((request) => {
+              const teamName = teams.find((team) => team.id === request.team_id)?.name;
+              return (
+                <li
+                  key={request.id}
+                  className="mb-2 p-2 rounded"
+                  style={{ border: "2px solid #ccc" }}
+                >
+                  <div className="bg-blue-100 p-2 rounded">
+                    <strong>{teamName}への参加リクエスト</strong>
+                  </div>
+                  <div className="flex justify-between items-center bg-gray-100 p-2 rounded">
+                    <div className="flex items-center">
+                      <img
+                        src={request.user.avatar_url || "/default-avatar.png"}
+                        alt={`${request.user.username}のアバター`}
+                        className="w-8 h-8 rounded-full mr-2"
+                      />
+                      <span>{request.user.username}</span>
+                    </div>
+                    <div className="flex">
+                      <button
+                        onClick={() =>
+                          approveRequest(
+                            request.id,
+                            request.user_id,
+                            request.team_id
+                          )
+                        }
+                        className="bg-green-500 text-white px-2 py-1 rounded text-sm mr-2 hover:bg-green-700"
+                      >
+                        承認
+                      </button>
+                      <button
+                        onClick={() => rejectRequest(request.id)}
+                        className="bg-red-500 text-white px-2 py-1 rounded text-sm hover:bg-red-700"
+                      >
+                        拒否
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         )}
         <TeamSearch user={user} />

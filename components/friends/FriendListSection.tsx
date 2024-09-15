@@ -47,6 +47,19 @@ const FriendListSection: React.FC<FriendListSectionProps> = ({
     router.push(`/friend-calendar?friend=${friendUserId}`);
   };
 
+  const handleDelete = async (friendId: string) => {
+    const { error } = await supabase
+      .from("friends")
+      .delete()
+      .eq("id", friendId);
+
+    if (error) {
+      console.error("友達削除エラー:", error);
+    } else {
+      router.refresh(); // 画面を自動で更新
+    }
+  };
+
   return (
     <>
       {title && <h3 className="font-semibold mt-4">{title}</h3>}
@@ -84,6 +97,14 @@ const FriendListSection: React.FC<FriendListSectionProps> = ({
                 className="bg-blue-500 text-white px-2 py-1 rounded text-sm hover:bg-blue-600 active:bg-blue-700 transition-colors duration-200"
               >
                 承認
+              </button>
+            )}
+            {friend.status === "accepted" && (
+              <button
+                onClick={() => handleDelete(friend.id)}
+                className="ml-2 text-gray-400 px-2 py-1 rounded text-2xl hover:bg-gray-100 active:bg-gray-200 transition-colors duration-200"
+              >
+                ×
               </button>
             )}
           </li>
