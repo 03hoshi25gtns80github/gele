@@ -53,7 +53,13 @@ const VideoDownloader: React.FC<VideoDownloaderProps> = ({ user_id }) => {
         return;
       }
 
-      setJobs(jobsData as unknown as Job[]);
+      // チーム名が存在しない場合の処理を追加
+      const jobsWithTeamName = jobsData.map((job) => ({
+        ...job,
+        teams: job.teams ? job.teams : { name: "チーム設定無し" },
+      }));
+
+      setJobs(jobsWithTeamName as unknown as Job[]);
     };
 
     fetchJobs();

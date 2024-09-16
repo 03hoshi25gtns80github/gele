@@ -1,6 +1,14 @@
 動画同時アップロードを複数本できないようにする
 サインアップ後にユーザー登録をする画面に遷移→書道でエラーが出る
 
+docker build --no-cache -t gele-docker .
+docker run -d -p 3000:3000 gele-docker
+docker ps
+docker stop e96aaa3ca4cf
+docker logs -f e96aaa3ca4cf
+docker exec -it e96aaa3ca4cf sh
+docker rm e96aaa3ca4cf
+
 next
 cron_jobs
 
