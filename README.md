@@ -1,6 +1,7 @@
 動画同時アップロードを複数本できないようにする
 サインアップ後にユーザー登録をする画面に遷移→書道でエラーが出る
 
+開発環境
 docker build --no-cache -t gele-docker .
 docker run -d -p 3000:3000 gele-docker
 docker ps
