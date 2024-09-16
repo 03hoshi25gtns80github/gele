@@ -3,6 +3,8 @@ import React, { useState, useCallback } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useDropzone } from "react-dropzone";
 import Spinner from "@/components/form/Spinner";
+import { FFmpeg } from '@ffmpeg/ffmpeg';
+import { fetchFile, toBlobURL } from '@ffmpeg/util';
 
 interface VideoFormProps {
   uid: string;
@@ -43,6 +45,7 @@ const VideoForm: React.FC<VideoFormProps> = ({ uid, onUpload }) => {
   const handleUpload = async (file: File) => {
     setUploading(true);
     setError(null);
+    console.log("Upload started");
 
     const formData = new FormData();
     formData.append("file", file);
@@ -53,19 +56,42 @@ const VideoForm: React.FC<VideoFormProps> = ({ uid, onUpload }) => {
       let filePath = "";
 
       if (fileExt === "mts") {
-        const response = await fetch("/api/convert-video", {
-          method: "POST",
-          body: formData,
+        console.log("MTS file detected, starting conversion");
+        const ffmpeg = new FFmpeg();
+        const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
+        
+        await ffmpeg.load({
+          coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+          wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
         });
+        console.log("FFmpeg loaded");
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Video conversion failed");
+        await ffmpeg.writeFile('input.mts', await fetchFile(file));
+        console.log("File written to FFmpeg");
+
+        console.log("Starting file conversion");
+        await ffmpeg.exec(['-i', 'input.mts', 'output.mp4']);
+        console.log("File conversion completed");
+
+        const data = await ffmpeg.readFile('output.mp4');
+        console.log("Converted file read from FFmpeg");
+
+        const randomString = Math.random().toString(36).substring(2, 15);
+        const fileName = `${uid}-${randomString}.mp4`;
+        const { data: uploadData, error } = await supabase.storage
+          .from("videos")
+          .upload(fileName, data, {
+            contentType: "video/mp4",
+          });
+
+        if (error) {
+          throw new Error("Upload failed");
         }
 
-        const data = await response.json();
-        filePath = data.filePath;
+        filePath = uploadData.path;
+        console.log("File uploaded to Supabase");
       } else {
+        console.log("Non-MTS file detected, uploading directly");
         const randomString = Math.random().toString(36).substring(2, 15);
         const fileName = `${uid}-${randomString}.${fileExt}`;
         const { data, error } = await supabase.storage
@@ -79,9 +105,11 @@ const VideoForm: React.FC<VideoFormProps> = ({ uid, onUpload }) => {
         }
 
         filePath = data.path;
+        console.log("File uploaded to Supabase");
       }
 
       onUpload(filePath);
+      console.log("Upload process completed");
     } catch (error) {
       console.error("Error uploading video:", error);
       setError(
@@ -91,6 +119,7 @@ const VideoForm: React.FC<VideoFormProps> = ({ uid, onUpload }) => {
       );
     } finally {
       setUploading(false);
+      console.log("Upload state set to false");
     }
   };
 
