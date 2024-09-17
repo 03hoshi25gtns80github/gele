@@ -2,6 +2,7 @@
 サインアップ後にユーザー登録をする画面に遷移→書道でエラーが出る
 
 ffmpegwasmやってみる
+遅かった
 
 開発環境
 docker build --no-cache -t gele-docker .
