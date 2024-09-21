@@ -34,7 +34,8 @@ export async function POST(request: Request): Promise<Response> {
     const tempInputPath = join(tmpdir(), `input-${Date.now()}.mts`);
     const tempOutputPath = join(tmpdir(), `output-${Date.now()}.mp4`);
 
-    await writeFile(tempInputPath, buffer);
+    const uint8Array = new Uint8Array(buffer);
+    await writeFile(tempInputPath, uint8Array);
 
     return new Promise<Response>((resolve) => {
       ffmpeg(tempInputPath)

@@ -105,11 +105,12 @@ export async function videoProcessor(jobId: string, userInput: string[]) {
     }
 
     const buffer = await fileData.arrayBuffer();
+    const uint8Array = new Uint8Array(buffer);
     const tempInputPath = join(
       tmpdir(),
       `input-${file.id}.${original_path.split(".").pop()}`
     );
-    await writeFile(tempInputPath, Buffer.from(buffer));
+    await writeFile(tempInputPath, uint8Array);
 
     // 処理がキャンセルされているか確認
     await checkIfCancelled(jobId);
@@ -268,7 +269,9 @@ async function transcribeAudio(filePath: string): Promise<string> {
 
   // 一時ファイルとして保存
   const tempFilePath = join(tmpdir(), `temp-${Date.now()}.mp3`);
-  await writeFile(tempFilePath, Buffer.from(await data.arrayBuffer()));
+  const arrayBuffer = await data.arrayBuffer();
+  const uint8Array = new Uint8Array(arrayBuffer);
+  await writeFile(tempFilePath, uint8Array);
 
   try {
     // Whisper APIを使用して文字起こし
