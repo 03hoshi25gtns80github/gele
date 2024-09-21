@@ -71,16 +71,16 @@ const FriendSearch: React.FC<{ user: User | null }> = ({ user }) => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="🔍 フレンド追加、ユーザー名を入力"
-          className="w-full border rounded px-2 py-1"
+          className="w-full border rounded px-2 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
         />
       </div>
       <ul>
         {searchResults.map((result) => (
-          <li key={result.id} className="flex justify-between items-center mb-2 bg-white">
-            <span>{result.username}</span>
+          <li key={result.id} className="flex justify-between items-center mb-2 bg-white dark:bg-gray-800 p-2 rounded">
+            <span className="text-gray-800 dark:text-gray-200">{result.username}</span>
             <button
               onClick={() => sendFriendRequest(result.id)}
-              className="bg-green-500 text-white px-2 py-1 rounded text-sm"
+              className="bg-green-500 text-white px-2 py-1 rounded text-sm hover:bg-green-600 transition duration-150 ease-in-out"
             >
               + 追加
             </button>

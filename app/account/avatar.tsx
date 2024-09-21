@@ -81,12 +81,12 @@ export default function Avatar({
             objectFit="cover"
           />
         ) : (
-          <div className="w-full h-full bg-gray-200" />
+          <div className="w-full h-full bg-gray-200 dark:bg-gray-700" />
         )}
       </div>
       <label
         htmlFor="single"
-        className="absolute bottom-0 right-0 bg-blue-400 text-white p-2 rounded-full hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer"
+        className="absolute bottom-0 right-0 bg-blue-500 dark:bg-blue-600 text-white p-2 rounded-full hover:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer transition duration-150 ease-in-out"
       >
         {uploading ? <Spinner className="h-5 w-5" /> : <FiCamera className="h-5 w-5" />}
       </label>

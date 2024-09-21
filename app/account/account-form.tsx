@@ -83,8 +83,8 @@ export default function AccountForm({ user }: { user: User | null }) {
   }
 
   return (
-    <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden p-6">
-      <h2 className="text-2xl font-bold mb-4">プロフィール編集</h2>
+    <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden p-6">
+      <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-200">プロフィール編集</h2>
       <div className="flex items-start space-x-6">
         <div className="relative">
           <Avatar
@@ -102,7 +102,7 @@ export default function AccountForm({ user }: { user: User | null }) {
             <div>
               <label
                 htmlFor="username"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 ユーザー名(半角英字)
               </label>
@@ -111,7 +111,7 @@ export default function AccountForm({ user }: { user: User | null }) {
                 type="text"
                 value={username || ""}
                 onChange={(e) => setUsername(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400 text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               />
             </div>
           </div>
@@ -119,11 +119,11 @@ export default function AccountForm({ user }: { user: User | null }) {
             <div>
               <label
                 htmlFor="code_name"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 コードネーム(半角英字)
               </label>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 チームでの呼ばれ方をローマ字で入力してください。映像の仕分けに利用されます。
               </p>
               <input
@@ -131,7 +131,7 @@ export default function AccountForm({ user }: { user: User | null }) {
                 type="text"
                 value={code_name || ""}
                 onChange={(e) => setCodeName(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400 text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               />
             </div>
           </div>
@@ -139,7 +139,7 @@ export default function AccountForm({ user }: { user: User | null }) {
       </div>
       <div className="mt-6">
         <button
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-blue-600 dark:hover:bg-blue-800"
           onClick={() => updateProfile({ username, code_name, avatar_url })}
           disabled={loading}
         >

@@ -95,19 +95,19 @@ const VideoDownloader: React.FC<VideoDownloaderProps> = ({ user_id }) => {
   };
 
   return (
-    <div className="p-2">
-      <h2 className="text-3xl font-bold mb-4">仕分けが完了した動画をダウンロード</h2>
+    <div className="p-2 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+      <h2 className="text-3xl font-bold mb-4 text-gray-800 dark:text-gray-200">仕分けが完了した動画をダウンロード</h2>
       <ul className="space-y-4">
         {jobs.map((job) => (
           <li
             key={job.id}
-            className="flex items-center justify-between p-4 bg-gray-100 rounded shadow"
+            className="flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-700 rounded shadow"
           >
-            <span className="font-mono">
+            <span className="font-mono text-gray-800 dark:text-gray-200">
               {job.teams.name} : {job.targets.join(", ")}
             </span>
             <button
-              className="ml-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+              className="ml-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 transition duration-150 ease-in-out"
               onClick={() => downloadVideo(job.id)}
             >
               ダウンロード

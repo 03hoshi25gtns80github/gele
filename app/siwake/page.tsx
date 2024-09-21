@@ -13,14 +13,14 @@ export default async function SiwakePage() {
   return (
     <>
       <Header id={user?.id || ""} />
-      <div className="w-3/5 mx-auto bg-white mt-2 shadow-md rounded-lg overflow-hidden">
+      <div className="w-3/5 mx-auto bg-white dark:bg-gray-800 mt-2 shadow-md rounded-lg overflow-hidden">
         <main className="container mx-auto py-8">
           <Suspense fallback={<div className="text-center">読み込み中...</div>}>
             <Siwake user={user as User} />
           </Suspense>
         </main>
       </div>
-      <div className="w-3/5 p-8 mx-auto bg-white mt-2 mb-24 shadow-md rounded-lg overflow-hidden">
+      <div className="w-3/5 p-8 mx-auto bg-white dark:bg-gray-800 mt-2 mb-24 shadow-md rounded-lg overflow-hidden">
         <VideoDownloader user_id={user?.id || ""} />
       </div>
     </>

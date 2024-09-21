@@ -174,18 +174,18 @@ const TeamForm: React.FC<{ user: User | null }> = ({ user }) => {
 
   return (
     <div className="max-w-2xl mx-auto mt-2">
-      <div className="mb-2 bg-white shadow-md rounded-lg p-4">
-        <h2 className="text-2xl font-bold mb-2">所属チーム</h2>
+      <div className="mb-2 bg-white dark:bg-gray-800 shadow-md rounded-lg p-4">
+        <h2 className="text-2xl font-bold mb-2 text-gray-800 dark:text-gray-200">所属チーム</h2>
         <ul className="mb-4">
           {teams.map((team) => (
             <li
               key={team.id}
-              className="flex justify-between items-center mb-1 bg-blue-100 p-2 rounded"
+              className="flex justify-between items-center mb-1 bg-blue-100 dark:bg-gray-600 p-2 rounded"
             >
-              <span>{team.name}</span>
+              <span className="text-gray-800 dark:text-gray-200">{team.name}</span>
               <button
                 onClick={() => leaveTeam(team.id)}
-                className="bg-red-500 text-white px-2 py-1 rounded text-sm hover:bg-red-700"
+                className="bg-red-500 text-white px-2 py-1 rounded text-sm hover:bg-red-700 transition duration-150 ease-in-out"
               >
                 脱退
               </button>
@@ -193,12 +193,12 @@ const TeamForm: React.FC<{ user: User | null }> = ({ user }) => {
           ))}
         </ul>
       </div>
-      <div className="bg-white shadow-md rounded-lg p-4">
-        <h2 className="text-2xl font-bold mb-2">チーム参加リクエスト</h2>
+      <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4">
+        <h2 className="text-2xl font-bold mb-2 text-gray-800 dark:text-gray-200">チーム参加リクエスト</h2>
         {requests.length > 0 && (
           <button
             onClick={() => setShowRequests(!showRequests)}
-            className="bg-gray-500 text-white px-2 py-1 rounded text-sm mb-4"
+            className="bg-gray-500 text-white px-2 py-1 rounded text-sm mb-4 hover:bg-gray-700 transition duration-150 ease-in-out"
           >
             {showRequests
               ? `リクエストを隠す`
@@ -212,20 +212,19 @@ const TeamForm: React.FC<{ user: User | null }> = ({ user }) => {
               return (
                 <li
                   key={request.id}
-                  className="mb-2 p-2 rounded"
-                  style={{ border: "2px solid #ccc" }}
+                  className="mb-2 p-2 rounded border-2 border-gray-300 dark:border-gray-600"
                 >
-                  <div className="bg-blue-100 p-2 rounded">
-                    <strong>{teamName}への参加リクエスト</strong>
+                  <div className="bg-blue-100 dark:bg-blue-800 p-2 rounded">
+                    <strong className="text-gray-800 dark:text-gray-200">{teamName}への参加リクエスト</strong>
                   </div>
-                  <div className="flex justify-between items-center bg-gray-100 p-2 rounded">
+                  <div className="flex justify-between items-center bg-gray-100 dark:bg-gray-700 p-2 rounded">
                     <div className="flex items-center">
                       <img
                         src={request.user.avatar_url || "/default-avatar.png"}
                         alt={`${request.user.username}のアバター`}
                         className="w-8 h-8 rounded-full mr-2"
                       />
-                      <span>{request.user.username}</span>
+                      <span className="text-gray-800 dark:text-gray-200">{request.user.username}</span>
                     </div>
                     <div className="flex">
                       <button
@@ -236,13 +235,13 @@ const TeamForm: React.FC<{ user: User | null }> = ({ user }) => {
                             request.team_id
                           )
                         }
-                        className="bg-green-500 text-white px-2 py-1 rounded text-sm mr-2 hover:bg-green-700"
+                        className="bg-green-500 text-white px-2 py-1 rounded text-sm mr-2 hover:bg-green-700 transition duration-150 ease-in-out"
                       >
                         承認
                       </button>
                       <button
                         onClick={() => rejectRequest(request.id)}
-                        className="bg-red-500 text-white px-2 py-1 rounded text-sm hover:bg-red-700"
+                        className="bg-red-500 text-white px-2 py-1 rounded text-sm hover:bg-red-700 transition duration-150 ease-in-out"
                       >
                         拒否
                       </button>

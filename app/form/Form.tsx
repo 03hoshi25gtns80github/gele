@@ -47,9 +47,9 @@ const Form = ({ user }: { user: User | null }) => {
   };
 
   return (
-    <div className="w-4/5 md:w-3/5 mx-auto mt-2 mb-24 bg-white shadow-md rounded-lg overflow-hidden md:mt-6">
+    <div className="w-4/5 md:w-3/5 mx-auto mt-2 mb-24 bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden md:mt-6">
       <div className="px-6 py-4">
-        <h2 className="text-2xl font-bold text-center mb-6">
+        <h2 className="text-2xl font-bold text-center mb-6 text-gray-800 dark:text-gray-200">
           動画を登録
         </h2>
         <div className="space-y-4">
@@ -58,11 +58,13 @@ const Form = ({ user }: { user: User | null }) => {
           <VideoForm uid={user?.id || ""} onUpload={handleVideoUpload} />
         </div>
       </div>
-      <div className="px-6 py-4 bg-gray-50">
+      <div className="px-6 py-4 bg-gray-50 dark:bg-gray-800">
         <button
           onClick={handleSubmit}
           className={`w-full text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out ${
-            isSubmitting ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
+            isSubmitting
+              ? "bg-gray-400 dark:bg-gray-600"
+              : "bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"
           }`}
           disabled={isSubmitting}
         >

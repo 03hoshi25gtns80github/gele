@@ -131,16 +131,16 @@ const Siwake: React.FC<SiwakeProps> = ({ user }) => {
   };
 
   return (
-    <div className="w-full mx-auto bg-white rounded-lg overflow-hidden relative">
+    <div className="w-full mx-auto bg-white dark:bg-gray-800 rounded-lg overflow-hidden relative shadow-lg">
       {isLoading && (
         <div className="fixed w-full min-h-screen inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
-          <div className="bg-white bg-opacity-90 p-8 rounded-lg shadow-lg">
-            <div className="text-black text-2xl font-bold">
+          <div className="bg-white dark:bg-gray-700 bg-opacity-90 p-8 rounded-lg shadow-lg">
+            <div className="text-black dark:text-white text-2xl font-bold">
               仕分け中です、このままお待ちください...
             </div>
             <button
               onClick={handleCancel}
-              className="mt-4 bg-red-500 text-white font-bold py-2 px-4 rounded"
+              className="mt-4 bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out"
             >
               キャンセル
             </button>
@@ -148,14 +148,14 @@ const Siwake: React.FC<SiwakeProps> = ({ user }) => {
         </div>
       )}
       <div className="px-6 py-4">
-        <h2 className="text-4xl font-bold text-center mb-6 animate-fade-in text-gray-700 text-shadow-md">
+        <h2 className="text-4xl font-bold text-center mb-6 animate-fade-in text-gray-700 dark:text-gray-200 text-shadow-md">
           映像仕分けAI
         </h2>
         <div className="space-y-4">
           <TargetMember
             userid={user.id}
             onUserInputChange={handleUserInputChange}
-            onTeamSelect={handleTeamSelect} // 追加
+            onTeamSelect={handleTeamSelect}
           />
           <VideoFormMulti
             onVideoDataSelected={handleVideoDataSelected}
@@ -168,7 +168,9 @@ const Siwake: React.FC<SiwakeProps> = ({ user }) => {
         <button
           onClick={handleUpload}
           className={`w-full text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out ${
-            isLoading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
+            isLoading
+              ? "bg-gray-400 dark:bg-gray-600"
+              : "bg-blue-500 hover:bg-blue-600 dark:bg-teal-600 dark:hover:bg-teal-700"
           }`}
           disabled={isLoading}
         >

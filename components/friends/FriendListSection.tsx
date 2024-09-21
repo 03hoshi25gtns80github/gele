@@ -72,7 +72,7 @@ const FriendListSection: React.FC<FriendListSectionProps> = ({
             {friend.status === "accepted" ? (
               <button
                 onClick={() => handleViewCalendar(friend.user_id)}
-                className="flex items-center w-full p-2 rounded hover:bg-gray-100 active:bg-gray-200 transition-colors duration-200"
+                className="flex items-center w-full p-2 rounded hover:bg-gray-600 active:bg-gray-200 transition-colors duration-200"
               >
                 <img
                   src={friend.avatar_url || "/default-avatar.png"}
@@ -102,7 +102,7 @@ const FriendListSection: React.FC<FriendListSectionProps> = ({
             {friend.status === "accepted" && (
               <button
                 onClick={() => handleDelete(friend.id)}
-                className="ml-2 text-gray-400 px-2 py-1 rounded text-2xl hover:bg-gray-100 active:bg-gray-200 transition-colors duration-200"
+                className="ml-2 text-gray-400 px-2 py-1 rounded text-2xl hover:bg-gray-600 active:bg-gray-200 transition-colors duration-200"
               >
                 ×
               </button>

@@ -248,14 +248,14 @@ const FriendsList = ({ user }: { user: User | null }) => {
   }
 
   return (
-    <div className="bg-white p-4 rounded shadow-lg">
+    <div className="bg-white dark:bg-gray-800 p-4 rounded shadow-lg">
       <nav className="mb-4">
         <button
           className={`mr-4 pb-2 ${
             activeTab === "friends"
-              ? "font-bold border-b-2 border-green-500"
+              ? "font-bold border-b-2 border-green-500 dark:border-green-400"
               : ""
-          }`}
+          } text-gray-800 dark:text-gray-200`}
           onClick={() => setActiveTab("friends")}
         >
           フレンド
@@ -263,17 +263,17 @@ const FriendsList = ({ user }: { user: User | null }) => {
         <button
           className={`mr-4 pb-2 ${
             activeTab === "requests"
-              ? "font-bold border-b-2 border-green-500"
+              ? "font-bold border-b-2 border-green-500 dark:border-green-400"
               : ""
-          }`}
+          } text-gray-800 dark:text-gray-200`}
           onClick={() => setActiveTab("requests")}
         >
           リクエスト
         </button>
         <button
           className={`pb-2 ${
-            activeTab === "teams" ? "font-bold border-b-2 border-green-500" : ""
-          }`}
+            activeTab === "teams" ? "font-bold border-b-2 border-green-500 dark:border-green-400" : ""
+          } text-gray-800 dark:text-gray-200`}
           onClick={() => setActiveTab("teams")}
         >
           チーム

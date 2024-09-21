@@ -49,20 +49,20 @@ const TeamCreate: React.FC<{ user: User | null }> = ({ user }) => {
   };
 
   return (
-    <div className="max-w-2xl mt-2 mx-auto bg-white shadow-lg rounded-lg overflow-hidden p-6">
-      <h2 className="text-2xl font-bold mb-4">新しいチームを作成</h2>
+    <div className="max-w-2xl mt-2 mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden p-6">
+      <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-200">新しいチームを作成</h2>
       <div className="mb-4">
         <input
           type="text"
           value={teamName}
           onChange={(e) => setTeamName(e.target.value)}
           placeholder="チーム名を入力"
-          className="w-full border rounded px-3 py-2"
+          className="w-full border rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition duration-150 ease-in-out"
         />
       </div>
       <button
         onClick={createTeam}
-        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-blue-600 dark:hover:bg-blue-800 transition duration-150 ease-in-out"
         disabled={loading}
       >
         {loading ? "作成中..." : "チームを作成"}

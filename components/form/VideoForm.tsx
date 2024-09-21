@@ -105,12 +105,14 @@ const VideoForm: React.FC<VideoFormProps> = ({ uid, onUpload }) => {
         <div
           {...getRootProps()}
           className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer ${
-            isDragActive ? "border-blue-500 bg-blue-50" : "border-gray-300"
+            isDragActive
+              ? "border-blue-500 bg-blue-50 dark:bg-blue-900 dark:border-blue-400"
+              : "border-gray-300 dark:border-gray-600"
           }`}
         >
           <input {...getInputProps()} />
           <svg
-            className="mx-auto h-12 w-12 text-gray-400"
+            className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -122,20 +124,20 @@ const VideoForm: React.FC<VideoFormProps> = ({ uid, onUpload }) => {
               d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
             />
           </svg>
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
             ドラッグ＆ドロップまたはクリックして動画をアップロード
           </p>
-          <p className="mt-1 text-xs text-gray-500">MP4, MOV, MTS (最大 1GB)</p>
+          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">MP4, MOV, MTS (最大 1GB)</p>
         </div>
       ) : (
         <div className="mt-4 flex items-center">
-          <p className="text-sm md:text-2xl p-2 bg-gray-100 text-gray-500 rounded-lg">
+          <p className="text-sm md:text-2xl p-2 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 rounded-lg">
             {videoFile.name}
           </p>
           <div className="flex justify-between items-center">
             <button
               onClick={handleReset}
-              className="ml-2 px-3 py-2 text-sm text-red-600 border border-red-600 rounded hover:bg-red-100 transition duration-300"
+              className="ml-2 px-3 py-2 text-sm text-red-600 dark:text-red-400 border border-red-600 dark:border-red-400 rounded hover:bg-red-100 dark:hover:bg-red-900 transition duration-300"
             >
               削除して再選択
             </button>
@@ -145,10 +147,10 @@ const VideoForm: React.FC<VideoFormProps> = ({ uid, onUpload }) => {
       {uploading && (
         <div className="flex items-center mt-2">
           <Spinner className="mr-2" />
-          <p className="text-sm text-blue-500">アップロード中...</p>
+          <p className="text-sm text-blue-500 dark:text-blue-400">アップロード中...</p>
         </div>
       )}
-      {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
+      {error && <p className="mt-2 text-sm text-red-500 dark:text-red-400">{error}</p>}
     </div>
   );
 };

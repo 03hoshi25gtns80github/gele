@@ -108,24 +108,24 @@ const TeamSearch: React.FC<{ user: User | null }> = ({ user }) => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="🔍 チーム検索、チーム名を入力"
-          className="w-full border rounded px-2 py-1"
+          className="w-full border rounded px-2 py-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
         />
       </div>
       <ul>
         {searchResults.map((team) => (
           <li
             key={team.id}
-            className="flex justify-between items-center mb-2 bg-gray-100 p-2 rounded"
+            className="flex justify-between items-center mb-2 bg-gray-100 dark:bg-gray-700 p-2 rounded"
           >
-            <span>{team.name}</span>
+            <span className="text-gray-800 dark:text-gray-200">{team.name}</span>
             {userTeams.includes(team.id) ? (
-              <span className="text-gray-500">参加済み</span>
+              <span className="text-gray-500 dark:text-gray-400">参加済み</span>
             ) : pendingRequests.includes(team.id) ? (
-              <span className="text-gray-500">リクエスト中</span>
+              <span className="text-gray-500 dark:text-gray-400">リクエスト中</span>
             ) : (
               <button
                 onClick={() => requestToJoinTeam(team.id)}
-                className="bg-green-500 text-white px-2 py-1 rounded text-sm hover:bg-green-700"
+                className="bg-green-500 text-white px-2 py-1 rounded text-sm hover:bg-green-700 transition duration-150 ease-in-out"
               >
                 参加リクエスト
               </button>

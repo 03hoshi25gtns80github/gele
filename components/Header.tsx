@@ -95,11 +95,11 @@ const Header: React.FC<HeaderProps> = ({ id }) => {
 
   return (
     <>
-      <header className="bg-gradient-to-r from-blue-200 via-blue-400 to-blue-200 p-2 shadow-lg w-full z-30">
+      <header className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-600 dark:from-blue-900 dark:via-blue-700 dark:to-blue-900 p-2 shadow-lg w-full z-30">
         <div className="flex justify-between items-center">
-          <div className="flex items-center bg-white rounded-full ml-0 md:ml-4 shadow-md">
+          <div className="flex items-center bg-white dark:bg-gray-800 rounded-full ml-0 md:ml-4 shadow-md">
             {avatarUrl && (
-              <div className="ml-2 border-2 border-gray-400 p-1 rounded-full">
+              <div className="ml-2 border-2 border-gray-400 dark:border-gray-600 p-1 rounded-full">
                 <Image
                   src={avatarUrl}
                   alt="User Avatar"
@@ -109,7 +109,7 @@ const Header: React.FC<HeaderProps> = ({ id }) => {
                 />
               </div>
             )}
-            <div className="text-blue-900 text-2xl md:text-3xl font-bold ml-1 mr-2 md:ml-4 md:mr-2">
+            <div className="text-blue-900 dark:text-white text-2xl md:text-3xl font-bold ml-1 mr-2 md:ml-4 md:mr-2">
               <button onClick={() => id && handleViewCalendar(id)}>
                 {username ? `${username}'s カレンダー` : WELCOME_MESSAGE}
               </button>
@@ -121,7 +121,7 @@ const Header: React.FC<HeaderProps> = ({ id }) => {
                 <li>
                   <Link
                     href="/my-calendar"
-                    className="font-bold text-blue-900 hover:text-blue-600 transition duration-300"
+                    className="font-bold text-white hover:text-blue-200 transition duration-300"
                   >
                     マイカレンダー
                   </Link>
@@ -129,7 +129,7 @@ const Header: React.FC<HeaderProps> = ({ id }) => {
                 <li>
                   <Link
                     href="/account"
-                    className="font-bold text-blue-900 hover:text-blue-600 transition duration-300"
+                    className="font-bold text-white hover:text-blue-200 transition duration-300"
                   >
                     プロフィール編集
                   </Link>
@@ -137,7 +137,7 @@ const Header: React.FC<HeaderProps> = ({ id }) => {
                 <li>
                   <Link
                     href="/siwake"
-                    className="font-bold text-blue-900 hover:text-blue-600 transition duration-300"
+                    className="font-bold text-white hover:text-blue-200 transition duration-300"
                   >
                     映像仕分けAI
                   </Link>
@@ -145,7 +145,7 @@ const Header: React.FC<HeaderProps> = ({ id }) => {
                 <li>
                   <form action="/auth/signout" method="post" className="inline">
                     <button
-                      className="font-bold text-blue-900 hover:text-blue-600 transition duration-300"
+                      className="font-bold text-white hover:text-blue-200 transition duration-300"
                       type="submit"
                     >
                       ログアウト

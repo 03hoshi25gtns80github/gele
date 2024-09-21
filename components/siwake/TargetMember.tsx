@@ -5,13 +5,13 @@ import { createClient } from "@/utils/supabase/client";
 interface TargetMemberProps {
   onUserInputChange: (inputs: string[]) => void;
   userid: string;
-  onTeamSelect: (teamId: string | null) => void; // 追加
+  onTeamSelect: (teamId: string | null) => void;
 }
 
 const TargetMember: React.FC<TargetMemberProps> = ({
   onUserInputChange,
   userid,
-  onTeamSelect, // 追加
+  onTeamSelect,
 }) => {
   const [userInputs, setUserInputs] = useState<string[]>([""]);
   const [teams, setTeams] = useState<any[]>([]);
@@ -25,7 +25,7 @@ const TargetMember: React.FC<TargetMemberProps> = ({
         .from("team_members")
         .select("team_id")
         .eq("user_id", userid)
-        .eq("status", "accepted"); // ここでstatusがacceptedのものを取得
+        .eq("status", "accepted");
 
       if (error) {
         console.error(error);
@@ -69,13 +69,13 @@ const TargetMember: React.FC<TargetMemberProps> = ({
 
   const handleTeamClick = async (teamId: string) => {
     setSelectedTeam(teamId);
-    onTeamSelect(teamId); // 追加
+    onTeamSelect(teamId);
 
     const { data, error } = await supabase
       .from("team_members")
       .select("user_id")
       .eq("team_id", teamId)
-      .eq("status", "accepted"); // ここでstatusがacceptedのものを取得
+      .eq("status", "accepted");
 
     if (error) {
       console.error(error);
@@ -100,42 +100,42 @@ const TargetMember: React.FC<TargetMemberProps> = ({
   };
 
   return (
-    <div className="mb-4 p-4 border-2 border-indigo-500 rounded-md">
-      <div className="mb-2 p-4 bg-white rounded-md">
-        <h2 className="text-lg font-semibold mb-2">チームリスト</h2>
+    <div className="mb-4 p-4 border-2 border-indigo-500 dark:border-teal-400 rounded-md bg-white dark:bg-gray-800">
+      <div className="mb-2 p-4 bg-gray-100 dark:bg-gray-700 rounded-md">
+        <h2 className="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">チームリスト</h2>
         {teams.map((team) => (
           <button
             key={team.id}
             onClick={() => handleTeamClick(team.id)}
-            className={`block w-full text-left p-2 border border-gray-300 rounded-md mb-2 hover:bg-gray-100 ${
-              selectedTeam === team.id ? "bg-blue-200" : ""
-            }`} // 追加
+            className={`block w-full text-left p-2 border border-gray-300 dark:border-gray-600 rounded-md mb-2 hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-150 ease-in-out ${
+              selectedTeam === team.id ? "bg-blue-200 dark:bg-blue-700" : ""
+            }`}
           >
-            {team.name}
+            <span className="text-gray-800 dark:text-gray-200">{team.name}</span>
           </button>
         ))}
       </div>
-      <div className="mb-4 px-4 bg-white rounded-md">
-        <div className="flex items-center mb-2">
-          <h2 className="text-lg font-semibold">メンバーリスト</h2>
+      <div className="mb-2 px-4 bg-gray-100 dark:bg-gray-700 rounded-md">
+        <div className="flex items-center py-2">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">メンバーリスト</h2>
           <button
-          onClick={addInputField}
-            className="ml-4 border-2 border-blue-500 text-xl text-blue-500 px-3 rounded-full hover:bg-blue-200 hover:text-white transition duration-150 ease-in-out"
+            onClick={addInputField}
+            className="ml-4 border-2 border-blue-500 dark:border-teal-400 text-xl text-blue-500 dark:text-teal-400 px-3 rounded-full hover:bg-blue-200 dark:hover:bg-teal-700 hover:text-white transition duration-150 ease-in-out"
           >
             +
           </button>
         </div>
         {userInputs.length === 0 ? (
-          <p className="text-gray-500">仕分け対象の名前を入力してください</p>
+          <p className="text-gray-500 dark:text-gray-400">仕分け対象の名前を入力してください</p>
         ) : (
           userInputs.map((input, index) => (
-            <div key={index} className="flex items-center mb-2">
+            <div key={index} className="flex items-center mb-2 pb-4">
               <input
                 type="text"
                 value={input}
                 onChange={(e) => handleInputChange(index, e.target.value)}
                 placeholder="仕分け対象の名前を入力してください"
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition duration-150 ease-in-out"
+                className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition duration-150 ease-in-out bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               />
               <button
                 onClick={() => removeInputField(index)}
