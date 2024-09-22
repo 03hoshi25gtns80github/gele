@@ -154,33 +154,33 @@ const Comment = ({ videoId }: CommentProps) => {
   };
 
   return (
-    <div className="bg-white p-2 md:p-4 rounded">
+    <div className="bg-white dark:bg-gray-800 p-2 md:p-4 rounded">
       <CommentInput
         onSubmit={handleCommentSubmit}
         isSubmitting={isSubmitting}
         ref={commentInputRef}
       />
-      <div className="bg-gray-100 p-2 rounded shadow-md">
+      <div className="bg-gray-100 dark:bg-gray-700 p-2 rounded shadow-md">
         {comments.length === 0 ? (
-          <p>まだコメントがありません</p>
+          <p className="text-gray-600 dark:text-gray-400">まだコメントがありません</p>
         ) : (
           <>
             <div
               key={comments[0].id}
               className="relative"
             >
-              <p>
+              <p className="text-gray-800 dark:text-gray-200">
                 {isCollapsed
                   ? truncateComment(comments[0].comment, 16)
                   : comments[0].comment}
               </p>
-              <small>
+              <small className="text-gray-600 dark:text-gray-400">
                 {formatTimeAgo(comments[0].created_at)} -{" "}
                 {comments[0].profiles.username}
               </small>
               <button
                 onClick={() => handleReply(comments[0].user_id)}
-                className="ml-2 text-gray-700"
+                className="ml-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100"
               >
                 <FaReply />
               </button>
@@ -192,20 +192,20 @@ const Comment = ({ videoId }: CommentProps) => {
                         menuOpenId === comments[0].id ? null : comments[0].id
                       )
                     }
-                    className="mt-1"
+                    className="mt-1 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
                   >
                     <FaEllipsisV />
                   </button>
                   {menuOpenId === comments[0].id && (
                     <div
-                      className="absolute right-4 w-12 bg-red-500 border rounded shadow-lg z-50"
+                      className="absolute right-4 w-12 bg-red-500 dark:bg-red-600 border rounded shadow-lg z-50"
                       ref={menuRef}
                     >
                       <button
                         onClick={() => {
                           handleDeleteComment(comments[0].id);
                         }}
-                        className="block w-full text-left px-2 py-2 text-sm text-white hover:bg-red-100"
+                        className="block w-full text-left px-2 py-2 text-sm text-white hover:bg-red-600 dark:hover:bg-red-700"
                       >
                         削除
                       </button>
@@ -215,7 +215,7 @@ const Comment = ({ videoId }: CommentProps) => {
               )}
               {comments.length > 1 && (
                 <p 
-                  className="text-blue-500 mt-2 mb-1 cursor-pointer"
+                  className="text-blue-500 dark:text-blue-400 mt-2 mb-1 cursor-pointer hover:text-blue-600 dark:hover:text-blue-300"
                   onClick={() => setIsCollapsed(!isCollapsed)}
                 >
                   {isCollapsed ? "コメントを表示" : "コメントを隠す"}
@@ -224,15 +224,15 @@ const Comment = ({ videoId }: CommentProps) => {
             </div>
             {!isCollapsed &&
               comments.slice(1).map((comment) => (
-                <div key={comment.id} className="relative">
-                  <p>{comment.comment}</p>
-                  <small>
+                <div key={comment.id} className="relative mt-2">
+                  <p className="text-gray-800 dark:text-gray-200">{comment.comment}</p>
+                  <small className="text-gray-600 dark:text-gray-400">
                     {formatTimeAgo(comment.created_at)} -{" "}
                     {comment.profiles.username}
                   </small>
                   <button
                     onClick={() => handleReply(comment.user_id)}
-                    className="ml-2 text-gray-700"
+                    className="ml-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100"
                   >
                     <FaReply />
                   </button>
@@ -244,20 +244,20 @@ const Comment = ({ videoId }: CommentProps) => {
                             menuOpenId === comment.id ? null : comment.id
                           )
                         }
-                        className="mt-1"
+                        className="mt-1 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
                       >
                         <FaEllipsisV />
                       </button>
                       {menuOpenId === comment.id && (
                         <div
-                          className="absolute right-4 w-12 bg-red-500 border rounded shadow-lg z-50"
+                          className="absolute right-4 w-12 bg-red-500 dark:bg-red-600 border rounded shadow-lg z-50"
                           ref={menuRef}
                         >
                           <button
                             onClick={() => {
                               handleDeleteComment(comment.id);
                             }}
-                            className="block w-full text-left px-2 py-2 text-sm text-white hover:bg-red-100"
+                            className="block w-full text-left px-2 py-2 text-sm text-white hover:bg-red-600 dark:hover:bg-red-700"
                           >
                             削除
                           </button>

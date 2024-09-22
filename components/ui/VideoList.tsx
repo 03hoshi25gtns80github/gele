@@ -80,21 +80,21 @@ const VideoList = ({ videos, user_id }: VideoListProps) => {
       {videos.map((video, index) => (
         <div
           key={index}
-          className="bg-gradient-to-r from-blue-200 to-blue-100 p-2 md:p-4 mt-2 mb-4 rounded md:flex shadow-lg relative"
+          className="bg-gradient-to-r from-blue-100 to-blue-50 dark:from-blue-900 dark:to-blue-800 p-2 md:p-4 mt-2 mb-4 rounded md:flex shadow-lg relative"
         >
           <div className="md:flex-1 w-full md:w-2/3">
-            <h2 className="text-xl md:text-2xl font-bold mb-2 md:ml-4">
+            <h2 className="text-xl md:text-2xl font-bold mb-2 md:ml-4 text-gray-800 dark:text-gray-200">
               {video.title}
             </h2>
             <video src={videoUrls[index]} controls className="w-full mb-2" />
           </div>
           <div className="md:mt-10 md:ml-4 w-full md:w-1/3">
-            <div className="mb-2 md:mb-4 bg-white p-2 rounded">
-              <div className="flex items-center border-b-2 border-gray-400">
-                <FaStickyNote className="md:ml-2 md:mb-2 text-gray-400 text-xl md:text-3xl" />
-                <div className="md:text-xl font-bold md:ml-2">メモ</div>
+            <div className="mb-2 md:mb-4 bg-white dark:bg-gray-700 p-2 rounded">
+              <div className="flex items-center border-b-2 border-gray-400 dark:border-gray-500">
+                <FaStickyNote className="md:ml-2 md:mb-2 text-gray-400 dark:text-gray-500 text-xl md:text-3xl" />
+                <div className="md:text-xl font-bold md:ml-2 text-gray-800 dark:text-gray-200">メモ</div>
               </div>
-              <p className="mt-2">{video.memo}</p>
+              <p className="mt-2 text-gray-700 dark:text-gray-300">{video.memo}</p>
             </div>
             <Comment videoId={video.id} />
           </div>
@@ -106,7 +106,7 @@ const VideoList = ({ videos, user_id }: VideoListProps) => {
           {user_id && (
             <div className="absolute top-2 md:top-3 right-12 md:right-14">
               <FaEdit
-                className="ml-2 mb-2 text-gray-400 text-3xl cursor-pointer"
+                className="ml-2 mb-2 text-gray-400 dark:text-gray-500 text-3xl cursor-pointer hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200"
                 onClick={() => handleEdit(index, video.title, video.memo)}
               />
             </div>

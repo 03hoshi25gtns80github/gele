@@ -25,25 +25,25 @@ export default function Home() {
   }, [router, supabase.auth]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="text-gray-800 dark:text-gray-200">Loading...</div>;
   }
 
   return (
     <>
       <Header id={null} />
-      <div className="w-4/5 md:w-2/3 pb-20 bg-gradient-to-r from-blue-200 to-purple-300 min-h-screen flex flex-col items-center">
+      <div className="w-4/5 md:w-2/3 pb-20 bg-gradient-to-r from-blue-200 to-purple-300 dark:from-slate-900 dark:to-slate-700 min-h-screen flex flex-col items-center">
         <motion.div
           className="text-center mt-10"
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
         >
-          <h1 className="text-gray-800 mt-24 text-5xl md:text-6xl font-bold">gele-plus</h1>
-          <p className="text-gray-800 text-xl md:text-3xl mt-6">
+          <h1 className="text-gray-800 dark:text-gray-200 mt-24 text-5xl md:text-6xl font-bold">gele-plus</h1>
+          <p className="text-gray-800 dark:text-gray-200 text-xl md:text-3xl mt-6">
             毎日の滑りをカレンダーに記録
           </p>
           <Link href="/login" legacyBehavior>
-            <a className="mt-16 inline-block bg-indigo-400 text-gray-800 text-xl font-bold py-3 px-6 rounded-full hover:bg-indigo-500 transition duration-300">
+            <a className="mt-16 inline-block bg-indigo-400 dark:bg-blue-600 text-gray-800 dark:text-white text-xl font-bold py-3 px-6 rounded-full hover:bg-indigo-500 dark:hover:bg-blue-700 transition duration-300">
               Log in or Sign up
             </a>
           </Link>
@@ -60,10 +60,10 @@ export default function Home() {
               className="w-80 h-70 mx-auto rounded-full shadow-lg md:order-2"
             />
             <div className="md:mr-8 mt-8 md:mt-0">
-              <h2 className="text-gray-800 text-3xl md:text-4xl font-bold">
+              <h2 className="text-gray-800 dark:text-gray-200 text-3xl md:text-4xl font-bold">
                 My Calendar
               </h2>
-              <p className="text-gray-800 text-xl md:text-3xl">カレンダーでいつでも振り返り</p>
+              <p className="text-gray-800 dark:text-gray-200 text-xl md:text-3xl">カレンダーでいつでも振り返り</p>
             </div>
           </motion.div>
           <motion.div
@@ -77,10 +77,10 @@ export default function Home() {
               className="w-80 h-70 mx-auto rounded-full shadow-lg"
             />
             <div className="md:ml-8 mt-8 md:mt-0">
-              <h2 className="text-gray-800 text-2xl md:text-4xl font-bold">
+              <h2 className="text-gray-800 dark:text-gray-200 text-2xl md:text-4xl font-bold">
                 video&memo&comment
               </h2>
-              <p className="text-gray-800 text-xl md:text-3xl">動画とメモとコメントを記録</p>
+              <p className="text-gray-800 dark:text-gray-200 text-xl md:text-3xl">動画とメモとコメントを記録</p>
             </div>
           </motion.div>
           <motion.div
@@ -94,10 +94,10 @@ export default function Home() {
               className="w-80 h-70 mx-auto rounded-full shadow-lg md:order-2"
             />
             <div className="md:mr-8 mt-8 md:mt-0">
-              <h2 className="text-gray-800 text-2xl md:text-4xl font-bold">
+              <h2 className="text-gray-800 dark:text-gray-200 text-2xl md:text-4xl font-bold">
                 Friend System
               </h2>
-              <p className="text-gray-800 text-xl md:text-3xl">
+              <p className="text-gray-800 dark:text-gray-200 text-xl md:text-3xl">
                 フレンドの動画にコメント
               </p>
             </div>
