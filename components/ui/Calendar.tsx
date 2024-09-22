@@ -23,13 +23,7 @@ const Calendar: React.FC<CalendarProps> = ({ dates, onDateSelect }) => {
     if (eventInfo.event.extendedProps.hasVideo) {
       return (
         <div style={{ position: "relative", height: "100%" }}>
-          <FaVideo style={{ 
-            color: "blue", 
-            fontSize: "3em", 
-            position: "absolute", 
-            bottom: "5px", 
-            right: "5px" 
-          }} />
+          <FaVideo className="text-blue-500 dark:text-gray-200 text-5xl absolute bottom-[5px] right-[5px]" />
         </div>
       );
     }
@@ -41,11 +35,8 @@ const Calendar: React.FC<CalendarProps> = ({ dates, onDateSelect }) => {
 
   return (
     <div
-      className="w-full h-full md:w-[120vh] md:h-[100vh] bg-white bg-opacity-70 p-2 md:p-10 rounded-lg flex justify-center items-center"
+      className="w-full h-full md:w-[120vh] md:h-[100vh] p-2 md:p-10 rounded-lg flex justify-center items-center max-w-[100vw] max-h-[100vh] bg-white dark:bg-slate-800 bg-opacity-80 dark:bg-opacity-90"
       style={{
-        maxWidth: "100vw",
-        maxHeight: "100vh",
-        backgroundColor: "rgba(255, 255, 255, 0.7)",
         padding: "10px",
         borderRadius: "10px",
       }}
