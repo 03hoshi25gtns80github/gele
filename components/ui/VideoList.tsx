@@ -89,7 +89,7 @@ const VideoList = ({ videos, user_id }: VideoListProps) => {
             <video src={videoUrls[index]} controls className="w-full mb-2" />
           </div>
           <div className="md:mt-10 md:ml-4 w-full md:w-1/3">
-            <div className="mb-2 md:mb-4 bg-white dark:bg-gray-700 p-2 rounded">
+            <div className="mb-2 md:mb-4 bg-white dark:bg-gray-800 p-2 rounded">
               <div className="flex items-center border-b-2 border-gray-400 dark:border-gray-500">
                 <FaStickyNote className="md:ml-2 md:mb-2 text-gray-400 dark:text-gray-500 text-xl md:text-3xl" />
                 <div className="md:text-xl font-bold md:ml-2 text-gray-800 dark:text-gray-200">メモ</div>
