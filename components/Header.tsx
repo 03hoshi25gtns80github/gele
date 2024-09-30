@@ -95,7 +95,7 @@ const Header: React.FC<HeaderProps> = ({ id }) => {
 
   return (
     <>
-      <header className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-600 dark:from-blue-900 dark:via-blue-700 dark:to-blue-900 p-2 shadow-lg w-full z-30">
+      <header className="bg-gradient-to-r from-blue-200 via-blue-300 to-blue-400 dark:from-blue-900 dark:via-blue-700 dark:to-blue-900 p-2 shadow-lg w-full z-30">
         <div className="flex justify-between items-center">
           <div className="flex items-center bg-white dark:bg-gray-800 rounded-full ml-0 md:ml-4 shadow-md">
             {avatarUrl && (

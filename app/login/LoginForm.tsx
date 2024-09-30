@@ -74,8 +74,7 @@ export default function LoginForm() {
           onClick={() => googleLogin()}
           className="w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out bg-white dark:bg-gray-700"
         >
-          <img src="/images/web_light_sq_ctn.svg" alt="Google" className="w-full hidden dark:block" />
-          <img src="/images/web_dark_sq_ctn.svg" alt="Google" className="w-full dark:hidden" />
+          <img src="/images/web_light_sq_ctn.svg" alt="Google" className="w-full" />
         </button>
       </div>
     </div>
