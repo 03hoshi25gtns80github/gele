@@ -15,7 +15,12 @@ const VideoForm: React.FC<VideoFormProps> = ({ uid, onUpload }) => {
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
+  const onDrop = useCallback(async (acceptedFiles: File[], fileRejections: any[]) => {
+    if (fileRejections.length > 0) {
+      const rejectedFiles = fileRejections.map(rejection => rejection.file.name);
+      alert(`次のファイルはアップロードできませんでした: ${rejectedFiles.join(", ")}`);
+    }
+
     if (acceptedFiles && acceptedFiles[0]) {
       const file = acceptedFiles[0];
       const fileExt = file.name.split(".").pop()?.toLowerCase();
@@ -26,6 +31,7 @@ const VideoForm: React.FC<VideoFormProps> = ({ uid, onUpload }) => {
         setError(
           "サポートされていないファイル形式です。MP4, MOV, MTS形式のファイルをアップロードしてください。"
         );
+        alert("サポートされていないファイル形式です。MP4, MOV, MTS形式のファイルをアップロードしてください。");
       }
     }
   }, []);
@@ -38,6 +44,7 @@ const VideoForm: React.FC<VideoFormProps> = ({ uid, onUpload }) => {
       "video/quicktime": [".mov"],
     },
     multiple: false,
+    maxSize: 1024 * 1024 * 1024, // 1GB
   });
 
   const handleUpload = async (file: File) => {

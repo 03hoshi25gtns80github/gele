@@ -17,13 +17,29 @@ const VideoFormMulti: React.FC<VideoFormMultiProps> = ({
   const [selectedVideos, setSelectedVideos] = useState<{ file: File; name: string }[]>([]);
 
   const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
-      const newVideos = acceptedFiles.map(file => ({
-        file,
-        name: file.name
-      }));
-      setSelectedVideos(newVideos);
-      onVideoDataSelected(newVideos);
+    (acceptedFiles: File[], fileRejections: any[]) => {
+      const validFiles: { file: File; name: string }[] = [];
+      const invalidFiles: string[] = [];
+
+      acceptedFiles.forEach(file => {
+        const fileExt = file.name.split(".").pop()?.toLowerCase();
+        if ((fileExt === "mts" || fileExt === "mp4" || fileExt === "mov") && file.size <= 1024 * 1024 * 1024) {
+          validFiles.push({ file, name: file.name });
+        } else {
+          invalidFiles.push(file.name);
+        }
+      });
+
+      fileRejections.forEach(rejection => {
+        invalidFiles.push(rejection.file.name);
+      });
+
+      if (invalidFiles.length > 0) {
+        alert(`次のファイルはアップロードできませんでした: ${invalidFiles.join(", ")}`);
+      }
+
+      setSelectedVideos(validFiles);
+      onVideoDataSelected(validFiles);
     },
     [onVideoDataSelected]
   );
@@ -36,6 +52,7 @@ const VideoFormMulti: React.FC<VideoFormMultiProps> = ({
       "video/quicktime": [".mov"],
     },
     multiple: true,
+    maxSize: 1024 * 1024 * 1024, // 1GB
   });
 
   const handleReset = () => {
