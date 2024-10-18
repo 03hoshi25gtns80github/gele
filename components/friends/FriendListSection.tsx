@@ -48,6 +48,11 @@ const FriendListSection: React.FC<FriendListSectionProps> = ({
   };
 
   const handleDelete = async (friendId: string) => {
+    const confirmDelete = window.confirm("本当に消去しますか？");
+    if (!confirmDelete) {
+      return; // ユーザーが「いいえ」を選択した場合、処理を中断
+    }
+
     const { error } = await supabase
       .from("friends")
       .delete()
