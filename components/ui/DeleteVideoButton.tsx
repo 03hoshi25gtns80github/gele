@@ -51,7 +51,7 @@ const DeleteVideoButton = ({ videoId, userId }: DeleteVideoButtonProps) => {
   return (
     <>
       {confirmDelete ? (
-        <div ref={confirmRef} className="bg-red-100 p-4 rounded-md shadow-lg">
+        <div ref={confirmRef} className="bg-red-100 dark:bg-gray-700 p-4 rounded-md shadow-lg mt-8">
           <p className="text-lg font-semibold mb-4">本当に消去しますか？</p>
           <div className="flex justify-between">
             <button
@@ -62,7 +62,7 @@ const DeleteVideoButton = ({ videoId, userId }: DeleteVideoButtonProps) => {
             </button>
             <button
               onClick={() => setConfirmDelete(false)}
-              className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 w-20"
+              className="bg-gray-500 dark:bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 dark:hover:bg-gray-500 w-20"
             >
               いいえ
             </button>
