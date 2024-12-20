@@ -35,7 +35,7 @@ async function checkIfCancelled(jobId: string) {
 
   if (jobStatus.status === "cancelled") {
     console.log(`ジョブID: ${jobId} はキャンセルされました`);
-    throw new Error("ジョブがキャンセルされました");
+    throw new Error("ジョブがキャン��ルされました");
   }
 }
 
@@ -43,140 +43,173 @@ export async function videoProcessor(jobId: string, userInput: string[]) {
   const supabase = createClient();
   console.log(`ジョブID: ${jobId} の処理を開始します`);
 
-  // Fetch job details
-  const { data: job, error: jobError } = await supabase
-    .from("video_jobs")
-    .select("*")
-    .eq("id", jobId)
-    .single();
+  try {
+    // Fetch job details
+    const { data: job, error: jobError } = await supabase
+      .from("video_jobs")
+      .select("*")
+      .eq("id", jobId)
+      .single();
 
-  if (jobError) {
-    console.error("ジョブの取得に失敗しました:", jobError);
-    throw jobError;
-  }
-
-  // 処理がキャンセルされているか確認
-  await checkIfCancelled(jobId);
-
-  // user_inputをvideo_jobsのtargetsに挿入
-  const { error: updateError } = await supabase
-    .from("video_jobs")
-    .update({ targets: userInput })
-    .eq("id", jobId);
-
-  if (updateError) {
-    console.error("ジョブの更新に失敗しました:", updateError);
-    throw updateError;
-  }
-
-  console.log("ジョブの詳細を取得しました:", job);
-
-  // Fetch video files
-  const { data: files, error: filesError } = await supabase
-    .from("video_files")
-    .select("*")
-    .eq("job_id", jobId);
-
-  if (filesError) {
-    console.error("ビデオファイルの取得に失敗しました:", filesError);
-    throw filesError;
-  }
-  console.log("ビデオファイルを取得しました:", files);
-
-  const transcriptions = [];
-
-  for (const file of files) {
-    console.log(`ファイルID: ${file.id} の処理を開始します`);
-
-    // 処理がキャンセルされているか確認
-    await checkIfCancelled(jobId);
-
-    // Process each file
-    const { original_path } = file;
-
-    // Download the file from Supabase
-    const { data: fileData, error: downloadError } = await supabase.storage
-      .from("siwake_storage")
-      .download(original_path);
-
-    if (downloadError) {
-      console.error("ファイルのダウンロードに失敗しました:", downloadError);
-      throw downloadError;
+    if (jobError) {
+      console.error("ジョブの取得に失敗しました:", jobError);
+      throw jobError;
     }
 
-    const buffer = await fileData.arrayBuffer();
-    const uint8Array = new Uint8Array(buffer);
-    const tempInputPath = join(
-      tmpdir(),
-      `input-${file.id}.${original_path.split(".").pop()}`
-    );
-    await writeFile(tempInputPath, uint8Array);
-
     // 処理がキャンセルされているか確認
     await checkIfCancelled(jobId);
 
-    // Convert to MP4
-    const processedPath = await convertToMp4(tempInputPath, file.id, jobId);
-    console.log(`ファイルID: ${file.id} をMP4に変換しました: ${processedPath}`);
+    // user_inputをvideo_jobsのtargetsに挿入
+    const { error: updateError } = await supabase
+      .from("video_jobs")
+      .update({ targets: userInput })
+      .eq("id", jobId);
 
-    // 処理がキャンセルされているか確認
-    await checkIfCancelled(jobId);
+    if (updateError) {
+      console.error("ジョブの更新に失敗しました:", updateError);
+      throw updateError;
+    }
 
-    // Convert to MP3
-    const mp3Path = await convertToMp3(tempInputPath, jobId);
-    console.log(`ファイルID: ${file.id} をMP3に変換しました: ${mp3Path}`);
+    console.log("ジョブの詳細を取得しました:", job);
 
-    // 処理がキャンセルされているか確認
-    await checkIfCancelled(jobId);
-
-    // Extract audio and transcribe
-    const transcription = await transcribeAudio(mp3Path);
-    console.log(
-      `ファイルID: ${file.id} の文字起こしが完了しました: ${transcription}`
-    );
-    transcriptions.push({ id: file.id, text: transcription });
-
-    // Update database with processed path
-    await supabase
+    // Fetch video files
+    const { data: files, error: filesError } = await supabase
       .from("video_files")
-      .update({ processed_path: processedPath })
-      .eq("id", file.id);
-    console.log(
-      `ファイルID: ${file.id} のデータベースを更新しました: ${processedPath}`
-    );
+      .select("*")
+      .eq("job_id", jobId);
 
-    // Clean up temporary files
-    await unlink(tempInputPath);
-  }
+    if (filesError) {
+      console.error("ビデオファイルの取得に失敗しました:", filesError);
+      throw filesError;
+    }
+    console.log("ビデオファイルを取得しました:", files);
 
-  // 処理がキャンセルされているか確認
-  await checkIfCancelled(jobId);
+    const transcriptions = [];
 
-  // Generate new file names after all transcriptions are done
-  const newFileNames = await generateNewFileName(transcriptions, userInput);
-  console.log("新しいファイル名を生成しました:", newFileNames);
+    for (const file of files) {
+      try {
+        console.log(`ファイルID: ${file.id} の処理を開始します`);
 
-  for (const { id, newFileName } of newFileNames) {
-    const file = files.find((f) => f.id === id);
-    if (!file) continue;
+        // 処理がキャンセルされているか確認
+        await checkIfCancelled(jobId);
 
-    // Update database with new file name and transcription
+        // Process each file
+        const { original_path } = file;
+
+        // Download the file from Supabase
+        const { data: fileData, error: downloadError } = await supabase.storage
+          .from("siwake_storage")
+          .download(original_path);
+
+        if (downloadError) {
+          console.error("ファイルのダウンロードに失敗しました:", downloadError);
+          throw downloadError;
+        }
+
+        const buffer = await fileData.arrayBuffer();
+        const uint8Array = new Uint8Array(buffer);
+        const tempInputPath = join(
+          tmpdir(),
+          `input-${file.id}.${original_path.split(".").pop()}`
+        );
+        await writeFile(tempInputPath, uint8Array);
+
+        // 処理がキャンセルされているか確認
+        await checkIfCancelled(jobId);
+
+        // Convert to MP4
+        const processedPath = await convertToMp4(tempInputPath, file.id, jobId);
+        console.log(`ファイルID: ${file.id} をMP4に変換しました: ${processedPath}`);
+
+        // 処理がキャンセルされているか確認
+        await checkIfCancelled(jobId);
+
+        // Convert to MP3
+        const mp3Path = await convertToMp3(tempInputPath, jobId);
+        console.log(`ファイルID: ${file.id} をMP3に変換しました: ${mp3Path}`);
+
+        // 処理がキャンセルされているか確認
+        await checkIfCancelled(jobId);
+
+        // Extract audio and transcribe
+        const transcription = await transcribeAudio(mp3Path);
+        console.log(
+          `ファイルID: ${file.id} の文字起こしが完了しました: ${transcription}`
+        );
+        transcriptions.push({ id: file.id, text: transcription });
+
+        // Update database with processed path
+        await supabase
+          .from("video_files")
+          .update({ processed_path: processedPath })
+          .eq("id", file.id);
+        console.log(
+          `ファイルID: ${file.id} のデータベースを更新しました: ${processedPath}`
+        );
+
+        // Clean up temporary files
+        const tempFiles: string[] = [tempInputPath, mp3Path];
+
+        // クリーンアップ処理
+        for (const tempFile of tempFiles) {
+          try {
+            await unlink(tempFile);
+          } catch (error) {
+            console.error(`一時ファイルの削除に失敗: ${tempFile}`, error);
+          }
+        }
+      } catch (error) {
+        if ((error as Error).message === "ジョブがキャンセルされました") {
+          await handleCancellation(jobId, file.id);
+          throw error;
+        }
+        throw error;
+      }
+    }
+
+    // 処理がキャンセルされているか確認
+    await checkIfCancelled(jobId);
+
+    // Generate new file names after all transcriptions are done
+    const newFileNames = await generateNewFileName(transcriptions, userInput);
+    console.log("新しいファイル名を生成しました:", newFileNames);
+
+    for (const { id, newFileName } of newFileNames) {
+      const file = files.find((f) => f.id === id);
+      if (!file) continue;
+
+      // Update database with new file name and transcription
+      await supabase
+        .from("video_files")
+        .update({
+          processed_name: newFileName,
+          transcription: transcriptions.find((t) => t.id === id)?.text,
+        })
+        .eq("id", id);
+      console.log(`ファイルID: ${file.id} のデータベースを更新しました`);
+    }
+
+    // Update job status
     await supabase
-      .from("video_files")
-      .update({
-        processed_name: newFileName,
-        transcription: transcriptions.find((t) => t.id === id)?.text,
-      })
-      .eq("id", id);
-    console.log(`ファイルID: ${file.id} のデータベースを更新しました`);
+      .from("video_jobs")
+      .update({ status: "completed" })
+      .eq("id", jobId);
+    console.log(`ジョブID: ${jobId} のステータスを更新しました: completed`);
+  } catch (error) {
+    if ((error as Error).message === "ジョブがキャンセルされました") {
+      await cleanupCancelledJob(jobId);
+    } else {
+      // その他のエラー処理
+      await supabase
+        .from("video_jobs")
+        .update({ 
+          status: "error",
+          error_message: (error as Error).message 
+        })
+        .eq("id", jobId);
+    }
+    throw error;
   }
-
-  // Update job status
-  await supabase
-    .from("video_jobs")
-    .update({ status: "completed" })
-    .eq("id", jobId);
-  console.log(`ジョブID: ${jobId} のステータスを更新しました: completed`);
 }
 
 async function convertToMp4(
@@ -315,7 +348,7 @@ async function generateNewFileName(
 １- テキストをローマ字に変換する
 ２- データセット内のローマ字をテキストのローマ字に対して走査させ、データセットのローマ字との部分一致や母音一致の一致率が高い箇所を調べる
 ３- データセットのどの名前を含むか推測し決定する 
-４- 推測したデータセット内のローマ字の名前と元のテキストを対応させる
+４- 推測したデータセット内のロー���字の名前と元のテキストを対応させる
 
 # データセット
 ${datasetStr}
@@ -380,4 +413,82 @@ async function uploadToSupabase(
   }
   console.log("Supabaseへのアップロードが完了しました:", data);
   return data.path;
+}
+
+// キャンセル時のクリーンアップ処理
+async function cleanupCancelledJob(jobId: string) {
+  const supabase = createClient();
+  console.log(`ジョブID: ${jobId} のクリーンアップを開始します`);
+
+  try {
+    // 処理中のファイルを取得
+    const { data: files } = await supabase
+      .from("video_files")
+      .select("*")
+      .eq("job_id", jobId);
+
+    if (files) {
+      // 各ファイルの処理
+      for (const file of files) {
+        await handleCancellation(jobId, file.id);
+      }
+    }
+
+    // ジョブのステータスを更新
+    await supabase
+      .from("video_jobs")
+      .update({ 
+        status: "cancelled",
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", jobId);
+
+    console.log(`ジョブID: ${jobId} のクリーンアップが完了しました`);
+  } catch (error) {
+    console.error(`クリーンアップ中にエラーが発生: ${error}`);
+    throw error;
+  }
+}
+
+// 個別ファイルのキャンセル処理
+async function handleCancellation(jobId: string, fileId: string) {
+  const supabase = createClient();
+  console.log(`ファイルID: ${fileId} のキャンセル処理を開始します`);
+
+  try {
+    // 処理済みファイルの削除
+    const { data: file } = await supabase
+      .from("video_files")
+      .select("original_path, processed_path")
+      .eq("id", fileId)
+      .single();
+
+    if (file) {
+      // Supabaseストレージからファイルを削除
+      if (file.processed_path) {
+        await supabase.storage
+          .from("siwake_storage")
+          .remove([file.processed_path]);
+      }
+      if (file.original_path) {
+        await supabase.storage
+          .from("siwake_storage")
+          .remove([file.original_path]);
+      }
+    }
+
+    // ファイルのステータスを更新
+    await supabase
+      .from("video_files")
+      .update({ 
+        status: "cancelled",
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", fileId);
+
+    console.log(`ファイルID: ${fileId} のキャンセル処理が完了しました`);
+  } catch (error) {
+    console.error(`ファイルのキャンセル処理中にエラーが発生: ${error}`);
+    throw error;
+  }
 }

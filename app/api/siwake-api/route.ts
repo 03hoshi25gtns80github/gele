@@ -78,24 +78,51 @@ export async function DELETE(req: NextRequest) {
     const body = await req.json();
     const { jobId } = body;
 
+    console.log("キャンセル対象のjobId:", jobId);
+
     if (!jobId) {
       return NextResponse.json({ error: "jobIdが必要です" }, { status: 400 });
     }
 
-    // ジョブのステータスをキャンセルに更新
     const supabase = createClient();
-    const { error } = await supabase
+    
+    // 現在のジョブステータスを確認
+    const { data: currentJob, error: jobError } = await supabase
       .from('video_jobs')
-      .update({ status: 'cancelled' })
-      .eq('id', jobId);
+      .select('status')
+      .eq('id', jobId)
+      .single();
 
-    if (error) {
-      throw new Error(error.message);
+    if (jobError) {
+      console.error("ジョブ状態の取得に失敗:", jobError);
+      throw jobError;
     }
 
-    return NextResponse.json({ message: "ジョブがキャンセルされました" }, { status: 200 });
+    // ステータスをキャンセルに更新
+    const { error: updateError } = await supabase
+      .from('video_jobs')
+      .update({ 
+        status: 'cancelled',
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', jobId);
+
+    if (updateError) {
+      console.error("ステータス更新に失敗:", updateError);
+      throw updateError;
+    }
+
+    console.log(`ジョブ ${jobId} のキャンセルに成功しました`);
+    return NextResponse.json({ 
+      message: "ジョブがキャンセルされました",
+      previousStatus: currentJob.status 
+    }, { status: 200 });
+
   } catch (error) {
-    console.error("キャンセルリクエストでエラーが発生しました:", error);
-    return NextResponse.json({ error: "キャンセルに失敗しました", details: (error as Error).message }, { status: 500 });
+    console.error("キャンセル処理でエラーが発生:", error);
+    return NextResponse.json(
+      { error: "キャンセルに失敗しました", details: (error as Error).message },
+      { status: 500 }
+    );
   }
 }
