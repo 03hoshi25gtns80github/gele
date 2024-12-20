@@ -15,6 +15,10 @@ const TeamListSection: React.FC<TeamListSectionProps> = ({ teams, user_id }) => 
     router.push(`/team-calendar?team=${teamId}`);
   };
 
+  const handleViewMemberCalendar = (memberId: string) => {
+    router.push(`/friend-calendar?friend=${memberId}`);
+  };
+
   return (
     <div>
       {teams.map((team) => (
@@ -27,9 +31,10 @@ const TeamListSection: React.FC<TeamListSectionProps> = ({ teams, user_id }) => 
           </button>
           <div className="flex flex-wrap gap-2">
             {team.members.map((member) => (
-              <div
+              <button
                 key={member.id}
-                className="flex items-center bg-white dark:bg-gray-600 p-2 rounded"
+                onClick={() => handleViewMemberCalendar(member.user_id)}
+                className="flex items-center bg-white dark:bg-gray-600 p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-500 transition-colors duration-200"
               >
                 <img
                   src={member.avatar_url || "/default-avatar.png"}
@@ -39,7 +44,7 @@ const TeamListSection: React.FC<TeamListSectionProps> = ({ teams, user_id }) => 
                 <span className="text-sm text-gray-800 dark:text-gray-200">
                   {member.username}
                 </span>
-              </div>
+              </button>
             ))}
           </div>
         </div>
