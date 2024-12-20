@@ -157,6 +157,10 @@ const TeamForm: React.FC<{ user: User | null }> = ({ user }) => {
   const leaveTeam = async (teamId: string) => {
     if (!user) return;
 
+    // 確認ダイアログを表示
+    const isConfirmed = window.confirm("本当にチームから脱退しますか？");
+    if (!isConfirmed) return;
+
     const { error } = await supabase
       .from("team_members")
       .delete()
