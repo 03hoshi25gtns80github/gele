@@ -86,7 +86,13 @@ const VideoList = ({ videos, user_id }: VideoListProps) => {
             <h2 className="text-xl md:text-2xl font-bold mb-2 md:ml-4 text-gray-800 dark:text-gray-200">
               {video.title}
             </h2>
-            <video src={videoUrls[index]} controls className="w-full mb-2" />
+            <video 
+              src={videoUrls[index]} 
+              controls 
+              playsInline
+              poster={`${videoUrls[index]}#t=0.1`}
+              className="w-full mb-2" 
+            />
           </div>
           <div className="md:mt-10 md:ml-4 w-full md:w-1/3">
             <div className="mb-2 md:mb-4 bg-white dark:bg-gray-800 p-2 rounded">
