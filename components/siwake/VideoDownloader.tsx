@@ -131,7 +131,9 @@ const VideoDownloader: React.FC<VideoDownloaderProps> = ({ user_id }) => {
                   {job.teams.name}
                 </span>
                 <span className="text-gray-800 dark:text-gray-200 break-all">
-                  {job.targets.join("、")}
+                  {job.targets && job.targets.length > 0 
+                    ? job.targets.join(", ")  // targetsが存在する場合のみjoinを実行
+                    : "ターゲットなし"}
                 </span>
               </div>
             </div>
