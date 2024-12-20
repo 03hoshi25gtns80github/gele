@@ -4,6 +4,7 @@ import { User } from "@supabase/supabase-js";
 import FriendsList from "./FriendsList";
 import FriendSearch from "./FriendSearch";
 import { FaUserFriends } from "react-icons/fa";
+import { useFriendsStore } from "@/store/friendsStore";
 
 interface FriendsButtonProps {
   user: User | null;
@@ -13,9 +14,20 @@ const FriendsButton: React.FC<FriendsButtonProps> = ({ user }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const buttonRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const { fetchFriendsAndTeams } = useFriendsStore();
+
+  // マウント時にデータをプリフェッチ
+  useEffect(() => {
+    if (user) {
+      fetchFriendsAndTeams(user.id);
+    }
+  }, [user, fetchFriendsAndTeams]);
 
   const handleMouseEnter = () => {
     setIsExpanded(true);
+    if (user) {
+      fetchFriendsAndTeams(user.id);
+    }
   };
 
   const handleMouseLeave = () => {
@@ -33,7 +45,6 @@ const FriendsButton: React.FC<FriendsButtonProps> = ({ user }) => {
     };
 
     document.addEventListener("mousemove", handleMouseMove);
-
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
     };
