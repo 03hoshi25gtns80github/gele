@@ -90,7 +90,7 @@ const VideoList = ({ videos, user_id }: VideoListProps) => {
               src={videoUrls[index]} 
               controls 
               playsInline
-              poster={`${videoUrls[index]}#t=0.1`}
+              poster={`${videoUrls[index]}?t=0.1`}
               className="w-full mb-2" 
             />
           </div>

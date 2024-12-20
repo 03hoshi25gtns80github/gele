@@ -8,6 +8,7 @@ import { createClient } from "@/utils/supabase/client";
 import { type User } from "@supabase/supabase-js";
 import Spinner from "@/components/form/Spinner";
 import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
 
 const Form = ({ user }: { user: User | null }) => {
   const supabase = createClient();
@@ -24,26 +25,51 @@ const Form = ({ user }: { user: User | null }) => {
   const handleTitleChange = (newTitle: string) => setTitle(newTitle);
   const handleVideoUpload = (url: string) => setVideoURL(url);
 
-  const handleSubmit = async () => {
-    setIsSubmitting(true);
-    const { data, error } = await supabase.from("videos").insert([
-      {
-        video_url: videoURL,
-        memo,
-        title,
-        date,
-        user_id: user?.id,
-      },
-    ]);
-
-    if (error) {
-      console.error("Error inserting data:", error.message);
-      alert("登録に失敗しました");
-    } else {
-      console.log("Data inserted successfully:", data);
-      router.push(`/my-video?date=${date}`);
+  const validateInputs = () => {
+    if (!title.trim()) {
+      toast.error('タイトルを入力してください');
+      return false;
     }
-    setIsSubmitting(false);
+    if (!memo.trim()) {
+      toast.error('メモを入力してください');
+      return false;
+    }
+    if (!videoURL) {
+      toast.error('動画をアップロードしてください');
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateInputs()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const { data, error } = await supabase.from("videos").insert([
+        {
+          video_url: videoURL,
+          memo,
+          title,
+          date,
+          user_id: user?.id,
+        },
+      ]);
+
+      if (error) {
+        throw error;
+      }
+
+      toast.success('登録が完了しました');
+      router.push(`/my-video?date=${date}`);
+    } catch (error) {
+      console.error("Error inserting data:", error);
+      toast.error('登録に失敗しました');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -63,7 +89,7 @@ const Form = ({ user }: { user: User | null }) => {
           onClick={handleSubmit}
           className={`w-full text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out ${
             isSubmitting
-              ? "bg-gray-400 dark:bg-gray-600"
+              ? "bg-gray-400 dark:bg-gray-600 cursor-not-allowed"
               : "bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"
           }`}
           disabled={isSubmitting}
